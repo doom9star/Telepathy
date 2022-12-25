@@ -1,0 +1,20 @@
+export const SET_USER = "SET_USER";
+export const SET_ETAB = "SET_ETAB";
+export const SET_LOADING = "SET_LOADING";
+export const SET_SCREEN = "SET_SCREEN";
+export const SET_LAST_SCROLL_TOP = "SET_LAST_SCROLL_TOP";
+
+export const RESET_GLOBAL_STATE = "RESET_GLOBAL_STATE";
+export const RESET_CONVO_STATE = "RESET_CONVO_STATE";
+
+export const SET_AID = "SET_AID";
+export const SET_CONVERSATIONS = "SET_CONVERSATIONS";
+export const SET_CONVERSATION = "SET_CONVERSATION";
+export const SET_USER_ACTIVE = "SET_USER_ACTIVE";
+export const SET_USER_ADMIN = "SET_USER_ADMIN";
+
+export const NEW_MESSAGE = "NEW_MESSAGE";
+export const STAR_MESSAGE = "STAR_MESSAGE";
+export const READ_MESSAGES = "READ_MESSAGES";
+export const FORWARD_MESSAGE = "FORWARD_MESSAGE";
+export const PAGINATE_MESSAGES = "PAGINATE_MESSAGES";

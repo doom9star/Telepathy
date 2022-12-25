@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  min-height: 100vh;
+  --mainColor: rgba(59, 130, 246, 1);
+}
+
+input[type="radio"] {
+  outline: none;
+}
+
+@layer utilities {
+  .home-icon {
+    color: var(--mainColor);
+    text-align: center;
+    margin-bottom: 0.2em;
+    cursor: pointer;
+  }
+  .home-icon:hover {
+    opacity: 0.8;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+#messageBox:empty::before {
+  content: attr(data-placeholder);
+  color: rgba(0, 0, 0, 0.5);
+}
+
+::-webkit-scrollbar {
+  width: 0.2em;
+  height: 0.2em;
+  background-color: white;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--mainColor);
+}
