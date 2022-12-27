@@ -41,6 +41,7 @@ export interface IConversation extends IBase {
   messages: IMessage[];
   admins?: string[];
   unread?: number;
+  legit: boolean;
 }
 
 export type IJsonResponse = {
@@ -68,4 +69,9 @@ export enum ScreenType {
   SHARE,
   MESSAGE,
   STARRED,
+}
+
+export enum SearchOptions {
+  ID,
+  NAME,
 }

@@ -85,7 +85,7 @@ export namespace Utils {
 }
 
 export namespace DB {
-  export function createMessage(
+  export async function createMessage(
     body: string,
     sender: User | string,
     recieversID: string[],
@@ -110,7 +110,7 @@ export namespace DB {
     });
   }
 
-  export function createConversation(
+  export async function createConversation(
     type: ConversationType,
     creatorID: string,
     participantIDS: string[],
@@ -133,6 +133,7 @@ export namespace DB {
       conversation.messages = messages ? messages : [];
       conversation.legit = !!isLegit;
       conversation.unread = conversation.messages.length;
+      conversation.admins = [];
       if (type === ConversationType.GROUP) {
         conversation.name = name;
         if (description) conversation.description = description;

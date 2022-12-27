@@ -295,8 +295,8 @@ function CreateAndEditGroup({ type }: Props) {
             spinnerColor={"blue"}
             isLoading={
               isEdit
-                ? lMgr[GLTypes.CONVERSATION_EDIT].loading
-                : lMgr[GLTypes.CONVERSATION_CREATION].loading
+                ? lMgr[GLTypes.CONVERSATION_EDIT]
+                : lMgr[GLTypes.CONVERSATION_CREATION]
             }
           />
         </div>

@@ -12,7 +12,7 @@ function Logo(props: Props) {
       className={
         "flex items-center cursor-pointer font-semibold " + props.styles
       }
-      style={{ fontFamily: "cursive", letterSpacing: "0.2em" }}
+      style={{ letterSpacing: "0.2em" }}
     >
       <i className="fab fa-500px text-2xl pr-2"></i>
       <span className="text-sm">TELEPATHY</span>

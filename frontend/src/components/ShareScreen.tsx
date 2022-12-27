@@ -49,7 +49,7 @@ const ShareScreen: React.FC = () => {
   } = useUserSearch();
 
   const handleSend = () => {
-    if (!lMgr[GLTypes.MESSAGE_FORWARD].loading) {
+    if (!lMgr[GLTypes.MESSAGE_FORWARD]) {
       dispatch(
         setLoading(GLTypes.MESSAGE_FORWARD, true, () =>
           dispatch(setScreen(screen.previous))
@@ -57,7 +57,7 @@ const ShareScreen: React.FC = () => {
       );
       socket.emit(
         "message:forward",
-        screen.data.id,
+        screen.data?.message.id,
         forwardees.map((f) => ({ uid: f.uid, cid: f.cid }))
       );
     }
@@ -107,7 +107,7 @@ const ShareScreen: React.FC = () => {
             onClick={handleSend}
             styles={`bg-blue-500 text-gray-100`}
             icon="fas fa-paper-plane"
-            isLoading={lMgr[GLTypes.MESSAGE_FORWARD].loading}
+            isLoading={lMgr[GLTypes.MESSAGE_FORWARD]}
           />
         )}
       </div>

@@ -15,15 +15,13 @@ export interface IAction {
 
 export interface IGlobalState {
   user: IUser | null;
-  showStarred: boolean;
   activeETab: ENames | null;
-  lastScrollTop: number;
   screen: {
     previous: ScreenType | null;
     current: ScreenType | null;
-    data?: any;
+    data?: Record<string, any>;
   };
-  lMgr: Record<GLTypes, { loading: boolean; callback: () => void }>;
+  lMgr: Record<GLTypes, boolean>;
 }
 
 export interface IConvoState {

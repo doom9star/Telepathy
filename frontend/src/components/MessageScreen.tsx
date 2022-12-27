@@ -4,7 +4,6 @@ import { useConvoContext, useGlobalContext } from "../context";
 import {
   paginateMessages,
   setAID,
-  setLastScrollTop,
   setLoading,
   setScreen,
 } from "../context/actionCreators";
@@ -22,7 +21,7 @@ const MessageScreen: React.FC = () => {
     state: { activeID },
   } = useConvoContext();
   const {
-    state: { user, lMgr, lastScrollTop },
+    state: { user, lMgr, screen },
     dispatch: globalDispatcher,
   } = useGlobalContext();
   const { name, date, isSolo, imageURL, isCreator, convoProps } =
@@ -62,15 +61,17 @@ const MessageScreen: React.FC = () => {
   const shareMessage = React.useCallback(
     (message: IMessage) => {
       globalDispatcher(
-        setLastScrollTop(messageContainerRef.current!.scrollTop)
+        setScreen(ScreenType.SHARE, {
+          message,
+          scrollY: messageContainerRef.current!.scrollTop,
+        })
       );
-      globalDispatcher(setScreen(ScreenType.SHARE, message));
     },
     [globalDispatcher]
   );
 
   const handleSend = () => {
-    if (message.trim() !== "" && !lMgr[GLTypes.MESSAGE_CREATION].loading) {
+    if (message.trim() !== "" && !lMgr[GLTypes.MESSAGE_CREATION]) {
       globalDispatcher(setLoading(GLTypes.MESSAGE_CREATION, true));
       socket.emit("message:create", activeID, message);
       setMessage("");
@@ -79,10 +80,7 @@ const MessageScreen: React.FC = () => {
   };
 
   React.useEffect(() => {
-    if (
-      (convoProps?.convo.unread || 0) > 0 &&
-      !lMgr[GLTypes.MESSAGE_READ].loading
-    ) {
+    if ((convoProps?.convo.unread || 0) > 0 && !lMgr[GLTypes.MESSAGE_READ]) {
       setNewMessageIndicatorLocation(convoProps?.convo.unread!);
       if (newMessageIndicatorResetTimeoutRef.current)
         clearTimeout(newMessageIndicatorResetTimeoutRef.current);
@@ -117,11 +115,11 @@ const MessageScreen: React.FC = () => {
   }, [isSolo, user, convoProps]);
 
   React.useEffect(() => {
-    if (lastScrollTop !== 0 && messageContainerRef.current)
+    if (screen.data?.scrollY !== 0 && messageContainerRef.current)
       messageContainerRef.current.scrollTo({
-        top: lastScrollTop,
+        top: screen.data!.scrollY,
       });
-  }, [lastScrollTop]);
+  }, [screen]);
 
   return (
     <>
@@ -133,9 +131,7 @@ const MessageScreen: React.FC = () => {
             className="w-10 h-10 rounded-full object-cover border-2 border-white"
           />
           <div className="flex flex-col ml-3">
-            <span className="text-blue-500" style={{ fontFamily: "cursive" }}>
-              {name}
-            </span>
+            <span className="text-blue-500">{name}</span>
             {isSolo && convoProps?.active && (
               <span className="text-xs text-gray-500 ">online</span>
             )}
@@ -183,8 +179,11 @@ const MessageScreen: React.FC = () => {
               className="py-2 px-4 text-gray-500 cursor-pointer text-sm hover:bg-gray-100"
               onClick={() => {
                 setShowToolBar(false);
-                setLastScrollTop(messageContainerRef.current!.scrollTop);
-                globalDispatcher(setScreen(ScreenType.INFO));
+                globalDispatcher(
+                  setScreen(ScreenType.INFO, {
+                    scrollY: messageContainerRef.current!.scrollTop,
+                  })
+                );
               }}
             >
               <i className="fas fa-info-circle text-green-500 w-8"></i>
@@ -251,7 +250,7 @@ const MessageScreen: React.FC = () => {
           id="messageBox"
           ref={messageBoxRef}
           className="w-full bg-white focus:outline-none p-2 z-50 overflow-y-scroll border border-gray-300 mr-4"
-          style={{ fontFamily: "cursive", fontSize: "80%" }}
+          style={{ fontSize: "80%" }}
           data-placeholder="Write a message..."
           onInput={(e) => setMessage(e.currentTarget.innerText)}
         ></div>
@@ -260,7 +259,7 @@ const MessageScreen: React.FC = () => {
           onClick={handleSend}
           styles={`bg-blue-500 text-gray-100`}
           icon="fas fa-paper-plane"
-          isLoading={lMgr[GLTypes.MESSAGE_CREATION].loading}
+          isLoading={lMgr[GLTypes.MESSAGE_CREATION]}
         />
       </div>
     </>

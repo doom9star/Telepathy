@@ -22,7 +22,7 @@ import { IOAuthenticate } from "./ts/middleware";
   const app: Application = express();
   const session = await RedisAuthSession.connect();
 
-  app.use(cors({ origin: process.env.WEB_URL, credentials: true }));
+  app.use(cors({ origin: process.env.FRONTEND, credentials: true }));
   app.use(express.json());
   app.use(session);
   app.use("/", MainRouter);
@@ -30,7 +30,7 @@ import { IOAuthenticate } from "./ts/middleware";
   const HTTPServer = http.createServer(app);
 
   const IO = new socketIO.Server(HTTPServer, {
-    cors: { credentials: true, origin: process.env.WEB_URL },
+    cors: { credentials: true, origin: process.env.FRONTEND },
   });
   IO.use(socketIOSession(session));
   IO.use(IOAuthenticate);

@@ -1,12 +1,19 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNewConversation } from "../hooks/useNewConversation";
 import { useUserSearch } from "../hooks/useUserSearch";
+import { SearchOptions } from "../ts/types";
 import Input from "./Input";
 import Loader from "./Loader";
 
 export default function Search() {
+  const [option, setOption] = useState<SearchOptions>(SearchOptions.NAME);
+  const [query, setQuery] = useState<string>("");
   const { users, loading, error, handler } = useUserSearch();
   const [handleNewConversation] = useNewConversation();
+
+  useEffect(() => {
+    handler(query, option);
+  }, [option, query, handler]);
 
   return (
     <div className="flex flex-col justify-center pt-5">
@@ -21,10 +28,35 @@ export default function Search() {
             placeholder: "Search users...",
             name: "query",
             autoFocus: true,
-            onChange: handler,
+            onChange: (e: any) => setQuery(e.target.value),
           }}
           styles="mr-2"
         />
+      </div>
+      <div
+        className="flex mt-4 justify-center items-center text-sm text-gray-500"
+        onChange={(e: any) => setOption(e.target.value)}
+      >
+        <input
+          type="radio"
+          value={SearchOptions.NAME}
+          name="option"
+          id="nameRadio"
+          className="mr-2"
+          defaultChecked={option === SearchOptions.NAME}
+        />
+        <label htmlFor="nameRadio" className="mr-20">
+          Name
+        </label>
+        <input
+          type="radio"
+          value={SearchOptions.ID}
+          name="option"
+          className="mr-2"
+          id="idRadio"
+          defaultChecked={option === SearchOptions.ID}
+        />
+        <label htmlFor="idRadio">ID</label>
       </div>
 
       {error && (

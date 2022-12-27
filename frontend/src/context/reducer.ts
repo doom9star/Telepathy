@@ -12,7 +12,6 @@ import {
   SET_CONVERSATION,
   SET_CONVERSATIONS,
   SET_ETAB,
-  SET_LAST_SCROLL_TOP,
   SET_LOADING,
   SET_SCREEN,
   SET_USER,
@@ -31,8 +30,8 @@ export const GlobalReducer = (
       return { ...state, user: action.payload };
     case SET_LOADING:
       return produce(state, (draft) => {
-        const { id, value, callback } = action.payload;
-        draft.lMgr[id as GLTypes] = { loading: value, callback };
+        const { id, value } = action.payload;
+        draft.lMgr[id as GLTypes] = value;
       });
     case SET_SCREEN:
       return {
@@ -44,7 +43,7 @@ export const GlobalReducer = (
               ? null
               : state.screen.current,
           current: action.payload.type,
-          data: action.payload.data,
+          data: { ...state.screen.data, ...action.payload.data },
         },
       };
     case SET_ETAB:
@@ -52,8 +51,6 @@ export const GlobalReducer = (
         ...state,
         activeETab: action.payload === state.activeETab ? null : action.payload,
       };
-    case SET_LAST_SCROLL_TOP:
-      return { ...state, lastScrollTop: action.payload };
     case RESET_GLOBAL_STATE:
       return GlobalState;
     default:
@@ -67,7 +64,12 @@ export const ConvoReducer = (
 ): IConvoState => {
   switch (action.type) {
     case SET_AID:
-      return { ...state, activeID: action.payload };
+      return produce(state, (draft) => {
+        if (!action.payload && !state.convos[state.activeID!].convo.legit) {
+          delete draft.convos[draft.activeID!];
+        }
+        draft.activeID = action.payload;
+      });
     case SET_CONVERSATIONS:
       return produce(state, (draft) => {
         for (const convo of action.payload) {
@@ -149,7 +151,8 @@ export const ConvoReducer = (
     case SET_USER_ACTIVE:
       return produce(state, (draft) => {
         const { cid, active } = action.payload;
-        draft.convos[cid].active = active;
+        if (draft.convos[cid] || draft.activeID === cid)
+          draft.convos[cid].active = active;
       });
     case SET_USER_ADMIN:
       return produce(state, (draft) => {

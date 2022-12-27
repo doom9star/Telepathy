@@ -30,10 +30,12 @@ export default (s: IOSessionRequest) => {
         info.thumbnail
       );
       s.emit("conversation:create:success", conversation);
-      conversation.unread = 1;
-      info.participants.forEach((id) =>
-        sMGR.get(id)?.emit("conversation:recieve", conversation)
-      );
+      if (type === ConversationType.GROUP) {
+        conversation.unread = 1;
+        info.participants.forEach((id) =>
+          sMGR.get(id)?.emit("conversation:recieve", conversation)
+        );
+      }
     }
   );
 

@@ -1,6 +1,6 @@
 import IOClient from "socket.io-client";
 
-export default IOClient(process.env.REACT_APP_SERVER_URL as string, {
+export default IOClient("http://localhost:5000", {
   withCredentials: true,
   reconnection: false,
 });

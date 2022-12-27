@@ -37,6 +37,7 @@ export default (s: IOSessionRequest) => {
         conversation.legit = true;
         await conversation.save();
         conversation.unread = 1;
+        conversation.messages = [newMessage];
         otherIDS.forEach((oid) =>
           sMGR.get(oid)?.emit("conversation:recieve", conversation)
         );

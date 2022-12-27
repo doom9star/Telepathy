@@ -31,7 +31,7 @@ function Settings() {
           <i className="fas fa-cog" />
         </span>
         <div className="px-2 pb-6">
-          <h3 className="text-gray-500" style={{ fontFamily: "fantasy" }}>
+          <h3 className="text-gray-500">
             <i className="fas fa-address-card"></i> &nbsp;ID
           </h3>
           <div className="flex items-center mt-2">
@@ -54,7 +54,7 @@ function Settings() {
           </div>
         </div>
         <div className="px-2 py-6">
-          <h3 className="text-gray-500" style={{ fontFamily: "fantasy" }}>
+          <h3 className="text-gray-500">
             <i className="fas fa-shield-alt"></i> &nbsp;Account
             &nbsp;Restriction
           </h3>
@@ -75,7 +75,7 @@ function Settings() {
             </label>
             <input
               type="radio"
-              value="!"
+              value="1"
               name="restriction"
               className="mr-2"
               id="privateRadio"

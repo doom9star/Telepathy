@@ -1,8 +1,13 @@
 import { useConvoContext, useGlobalContext } from "../context";
-import { setAID, setETab } from "../context/actionCreators";
+import {
+  setAID,
+  setETab,
+  setLoading,
+  setScreen,
+} from "../context/actionCreators";
 import socket from "../socket";
 import { ENames } from "../ts/constants";
-import { ConversationType } from "../ts/types";
+import { ConversationType, GLTypes, ScreenType } from "../ts/types";
 
 export function useNewConversation() {
   const {
@@ -19,9 +24,11 @@ export function useNewConversation() {
       ) {
         globalDispatcher(setETab(ENames.SOLO));
         convoDispatcher(setAID(convo.id));
+        globalDispatcher(setScreen(ScreenType.MESSAGE));
         return;
       }
     }
+    globalDispatcher(setLoading(GLTypes.CONVERSATION_CREATION, true));
     socket.emit("conversation:create", ConversationType.SOLO, {
       participants: [uid],
     });

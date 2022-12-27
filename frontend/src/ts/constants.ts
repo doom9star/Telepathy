@@ -5,7 +5,7 @@ export const theme = {
 };
 
 export const axios = Axios.create({
-  baseURL: process.env.REACT_APP_SERVER_URL,
+  baseURL: "http://localhost:5000",
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",

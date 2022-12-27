@@ -1,6 +1,6 @@
 import React from "react";
 import { axios } from "../ts/constants";
-import { IJsonResponse, IUser } from "../ts/types";
+import { IJsonResponse, IUser, SearchOptions } from "../ts/types";
 
 export function useUserSearch() {
   const [users, setUsers] = React.useState<IUser[]>([]);
@@ -9,15 +9,14 @@ export function useUserSearch() {
   const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
   const handler = React.useCallback(
-    async (e: React.ChangeEvent<HTMLInputElement>) => {
-      const query = e.target.value;
-      if (query.trim() !== "") {
+    async (query: string, option: SearchOptions) => {
+      if (query.trim().length > 1) {
         if (timeoutRef.current) clearTimeout(timeoutRef.current);
         setLoading(true);
         setError("");
         timeoutRef.current = setTimeout(async () => {
           const { data } = await axios.get<IJsonResponse & { body: IUser[] }>(
-            `/api/search/user/${query}`
+            `/api/search/user/${option}/${query}`
           );
           setError(
             data.body.length !== 0

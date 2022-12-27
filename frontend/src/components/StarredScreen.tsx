@@ -37,13 +37,7 @@ function StarredScreen() {
       </p>
       <i
         className="fas fa-chevron-left bg-blue-500 text-xs text-white mb-4 py-1 px-2 rounded-full cursor-pointer hover:opacity-80"
-        onClick={() =>
-          globalDispatcher(
-            setScreen(
-              screen.previous === ScreenType.MESSAGE ? null : screen.previous
-            )
-          )
-        }
+        onClick={() => globalDispatcher(setScreen(screen.previous))}
       />
       {loading ? (
         <Loader styles={{ left: "50%" }} />

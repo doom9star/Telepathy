@@ -4,7 +4,7 @@ import Conversation from "../entity/Conversation";
 import { Message } from "../entity/Message";
 import User from "../entity/User";
 import { RestAuthenticate } from "../ts/middleware";
-import { RestSessionRequest } from "../ts/types";
+import { RestSessionRequest, SearchOptions } from "../ts/types";
 import { Utils } from "../ts/utils";
 import ImageRouter from "./image";
 
@@ -13,16 +13,22 @@ const router = Router();
 router.use("/image", ImageRouter);
 
 router.get(
-  "/search/user/:query",
+  "/search/user/:option/:query",
   RestAuthenticate,
   async (req: RestSessionRequest, res: Response): Promise<Response> => {
+    const option = req.params.option as any;
     const query = req.params.query;
-    const users = await User.createQueryBuilder("u")
+    let qb = User.createQueryBuilder("u")
       .leftJoinAndSelect("u.avatar", "a")
       .where("u.restricted = 0")
-      .andWhere("u.username LIKE :query", { query: `%${query}%` })
-      .andWhere("u.id <> :id", { id: req.session.uid })
-      .getMany();
+      .andWhere("u.id <> :id", { id: req.session.uid });
+
+    if (option == SearchOptions.ID)
+      qb = qb.andWhere("u.id = :query", { query });
+    else if (option == SearchOptions.NAME)
+      qb = qb.andWhere("u.username LIKE :query", { query: `%${query}%` });
+
+    const users = await qb.getMany();
     return res.json(Utils.getResponse(200, users));
   }
 );

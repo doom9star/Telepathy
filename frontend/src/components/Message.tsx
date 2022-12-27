@@ -63,10 +63,10 @@ function Message({ message, convoType, shareMessage }: Props) {
       )}
       <div className="flex justify-between">
         <p
-          style={{ wordSpacing: "0.4em" }}
+          style={{ wordSpacing: "0.4em", fontFamily: "initial" }}
           className={`${
             convoType === ConversationType.GROUP && "pl-10 pt-2"
-          } whitespace-pre-wrap`}
+          } whitespace-pre-wrap text-xs`}
         >
           {message.body}
         </p>

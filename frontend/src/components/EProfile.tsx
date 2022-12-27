@@ -65,10 +65,7 @@ function EProfile() {
               onClick={() => setShowToolBar(!showToolBar)}
             ></i>
           )}
-          <span
-            className="text-gray-600 mt-2 text-xl -ml-2"
-            style={{ fontFamily: "fantasy" }}
-          >
+          <span className="text-gray-600 mt-2 text-xl -ml-2">
             <span className="text-gray-400">@ </span>
             {user?.username}
           </span>

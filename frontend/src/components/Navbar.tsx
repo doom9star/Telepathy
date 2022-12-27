@@ -1,9 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useLogout } from "../hooks/useLogout";
-import { useConvoContext, useGlobalContext } from "../context";
+import { useGlobalContext } from "../context";
 import Logo from "./Logo";
-import { setAID, setScreen } from "../context/actionCreators";
+import { setScreen } from "../context/actionCreators";
 import { ScreenType } from "../ts/types";
 
 function Navbar() {
@@ -11,7 +11,6 @@ function Navbar() {
     state: { user },
     dispatch: globalDispatcher,
   } = useGlobalContext();
-  const { dispatch: convoDispatcher } = useConvoContext();
   const [showMenu, setShowMenu] = React.useState(false);
   const { handler: logout } = useLogout();
 
@@ -46,7 +45,7 @@ function Navbar() {
                   alt="noImg"
                   className="w-7 h-7 mr-2 rounded-full object-cover"
                 />
-                <span className="text-gray-300 mr-4 font-bold">
+                <span className="text-white mr-4 font-bold">
                   <span className="text-gray-400">@</span>
                   {user.username}
                 </span>
@@ -67,7 +66,6 @@ function Navbar() {
                       className="py-2 px-4 cursor-pointer hover:bg-gray-50"
                       onClick={() => {
                         globalDispatcher(setScreen(ScreenType.STARRED));
-                        convoDispatcher(setAID(null));
                       }}
                     >
                       <i className="fas fa-star text-blue-600 w-6" />

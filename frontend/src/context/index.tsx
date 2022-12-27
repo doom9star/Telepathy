@@ -18,14 +18,12 @@ export const GlobalState: IGlobalState = {
     .reduce(
       (p, c) => ({
         ...p,
-        [parseInt(c)]: { loading: false, callback: undefined },
+        [parseInt(c)]: false,
       }),
       {}
     ) as any,
   activeETab: null,
-  showStarred: false,
-  lastScrollTop: 0,
-  screen: { previous: null, current: null },
+  screen: { previous: null, current: null, data: {} },
 };
 
 export const ConvoState: IConvoState = {

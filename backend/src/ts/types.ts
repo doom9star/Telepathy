@@ -30,3 +30,8 @@ export enum ImageState {
   REMOVE = "REMOVE",
   UPDATE = "UPDATE",
 }
+
+export enum SearchOptions {
+  ID,
+  NAME,
+}

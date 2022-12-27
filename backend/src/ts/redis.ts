@@ -20,7 +20,7 @@ export class RedisAuthSession {
         const store: RedisStore = createRedisStore(session);
         this.session = session({
           store: new store({ client: this.client }),
-          secret: process.env.session_secret || "",
+          secret: process.env.SESSION_SECRET || "",
           resave: false,
           saveUninitialized: false,
           name: "sid",

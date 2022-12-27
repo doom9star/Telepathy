@@ -17,7 +17,6 @@ import {
   SET_CONVERSATION,
   SET_CONVERSATIONS,
   SET_ETAB,
-  SET_LAST_SCROLL_TOP,
   SET_LOADING,
   SET_SCREEN,
   SET_USER,
@@ -45,17 +44,13 @@ export const setLoading = (
   };
 };
 
-export const setScreen = (type: ScreenType | null, data?: any): IAction => {
+export const setScreen = (
+  type: ScreenType | null,
+  data?: Record<string, any>
+): IAction => {
   return {
     type: SET_SCREEN,
     payload: { type, data },
-  };
-};
-
-export const setLastScrollTop = (top: number): IAction => {
-  return {
-    type: SET_LAST_SCROLL_TOP,
-    payload: top,
   };
 };
 

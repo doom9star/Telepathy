@@ -28,29 +28,13 @@ export function useIOLnrs() {
     dispatch: convoDispatcher,
     state: { activeID },
   } = useConvoContext();
-  const {
-    state: { lMgr },
-  } = useGlobalContext();
   const history = useHistory();
   const activeIDRef = React.useRef<string | null>(activeID);
-  const lMgrRef = React.useRef<
-    Record<
-      GLTypes,
-      {
-        loading: boolean;
-        callback: () => void;
-      }
-    >
-  >(lMgr);
   const { dispatch: globalDispatcher } = useGlobalContext();
 
   React.useEffect(() => {
     activeIDRef.current = activeID;
   }, [activeID]);
-
-  React.useEffect(() => {
-    lMgrRef.current = lMgr;
-  }, [lMgr]);
 
   React.useEffect(() => {
     socket.on("message:create:success", (message: IMessage) => {
@@ -69,7 +53,7 @@ export function useIOLnrs() {
       ) => {
         convoDispatcher(forwardMessages(newConvos, existingConvos));
         globalDispatcher(setLoading(GLTypes.MESSAGE_FORWARD, false));
-        lMgrRef.current[GLTypes.MESSAGE_FORWARD].callback?.();
+        globalDispatcher(setScreen(ScreenType.MESSAGE));
       }
     );
     socket.on("message:read:recieve", (cid: string, uid: string) => {
@@ -82,8 +66,8 @@ export function useIOLnrs() {
       globalDispatcher(setLoading(GLTypes.CONVERSATION_CREATION, false));
       if (conversation.type === ConversationType.GROUP) history.push("/home");
       convoDispatcher(setConversation(conversation));
-      globalDispatcher(setScreen(ScreenType.MESSAGE));
       convoDispatcher(setAID(conversation.id));
+      globalDispatcher(setScreen(ScreenType.MESSAGE));
       globalDispatcher(
         setETab(
           conversation.type === ConversationType.SOLO
