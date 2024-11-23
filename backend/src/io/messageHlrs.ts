@@ -6,7 +6,8 @@ import { IOSessionRequest } from "../ts/types";
 import { DB } from "../ts/utils";
 
 export default (s: IOSessionRequest) => {
-  const uid = s.handshake.session!.uid!;
+  const uid = s.request.session!.uid!;
+
   s.on("message:create", async (cid: string, body: string) => {
     const conversation = await Conversation.findOne({
       where: { id: cid },

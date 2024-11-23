@@ -1,18 +1,18 @@
-import { axios } from "../ts/constants";
 import React from "react";
 import validator from "validator";
+import { axios } from "../ts/constants";
 
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Button from "../components/Button";
 import Input from "../components/Input";
 import Logo from "../components/Logo";
-import { Link, RouteComponentProps } from "react-router-dom";
 
 interface ResetInfo {
   password: string;
   confirmPassword: string;
 }
 
-function ResetPassword(props: RouteComponentProps) {
+function ResetPassword() {
   const [info, setInfo] = React.useState({
     password: "",
     confirmPassword: "",
@@ -21,14 +21,16 @@ function ResetPassword(props: RouteComponentProps) {
   const [loading, setLoading] = React.useState(false);
   const [complete, setComplete] = React.useState(false);
 
+  const params = useParams();
+  const navigate = useNavigate();
+
   React.useEffect(() => {
-    const { uid } = props.match.params as { uid: string };
     axios
-      .post(`/auth/reset-password/${uid}`, { password: null })
+      .post(`/auth/reset-password/${params.uid}`, { password: null })
       .then((res) => {
-        if (res.data.status === 401) props.history.push("/login");
+        if (res.data.status === 401) navigate("/login");
       });
-  }, [props.match.params, props.history]);
+  }, [params.uid, navigate]);
 
   const onChange = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,28 +39,27 @@ function ResetPassword(props: RouteComponentProps) {
     [setInfo]
   );
 
-  const handleReset = React.useCallback(
-    async (e: React.MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
-      const { confirmPassword, password } = info;
-      const errors = {} as ResetInfo;
+  const handleReset = React.useCallback(async () => {
+    const { confirmPassword, password } = info;
+    const errors = {} as ResetInfo;
 
-      if (validator.isEmpty(password)) errors.password = "Must not be empty!";
-      else if (!validator.isLength(password, { min: 8 }))
-        errors.password = "Must have minimum 8 characters!";
-      else if (!validator.equals(password, confirmPassword))
-        errors.confirmPassword = "Passwords must match!";
+    if (validator.isEmpty(password)) errors.password = "Must not be empty!";
+    else if (!validator.isLength(password, { min: 8 }))
+      errors.password = "Must have minimum 8 characters!";
+    else if (!validator.equals(password, confirmPassword))
+      errors.confirmPassword = "Passwords must match!";
 
-      setErrors(errors);
-      if (JSON.stringify(errors) === "{}") {
-        setLoading(true);
-        const { uid } = props.match.params as { uid: string };
-        const { data } = await axios.post(`/auth/reset-password/${uid}`, info);
-        setLoading(false);
-        if (data.status === 200) setComplete(true);
-      }
-    },
-    [info, setErrors, props.match.params]
-  );
+    setErrors(errors);
+    if (JSON.stringify(errors) === "{}") {
+      setLoading(true);
+      const { data } = await axios.post(
+        `/auth/reset-password/${params.uid}`,
+        info
+      );
+      setLoading(false);
+      if (data.status === 200) setComplete(true);
+    }
+  }, [info, params.uid]);
 
   return (
     <div

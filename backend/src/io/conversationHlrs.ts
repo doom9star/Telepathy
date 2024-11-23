@@ -6,7 +6,7 @@ import { ImageState, IOSessionRequest } from "../ts/types";
 import { DB, Utils } from "../ts/utils";
 
 export default (s: IOSessionRequest) => {
-  const uid = s.handshake.session!.uid!;
+  const uid = s.request.session!.uid!;
 
   s.on(
     "conversation:create",

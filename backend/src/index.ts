@@ -1,25 +1,24 @@
 import cors from "cors";
 import dotenv from "dotenv";
-import express, { Application } from "express";
+import express from "express";
+import socketIOSession from "express-socket.io-session";
+import http from "http";
 import { join } from "path";
 import "reflect-metadata";
+import socketIO from "socket.io";
 import { createConnection } from "typeorm";
+import IORouter from "./io";
 import MainRouter from "./routes";
+import { IOAuthenticate } from "./ts/middleware";
 import { RedisAuthSession } from "./ts/redis";
 import { Utils } from "./ts/utils";
-import http from "http";
-import socketIO from "socket.io";
-import socketIOSession from "express-socket.io-session";
-import IORouter from "./io";
-import { IOAuthenticate } from "./ts/middleware";
 
-(async () => {
-  dotenv.config({ path: join(__dirname, "../.env") });
+dotenv.config({ path: join(__dirname, "../.env") });
 
-  const connection = await createConnection();
-  if (connection) await connection.queryResultCache!.clear();
+const main = async () => {
+  await createConnection();
 
-  const app: Application = express();
+  const app = express();
   const session = await RedisAuthSession.connect();
 
   app.use(cors({ origin: process.env.FRONTEND, credentials: true }));
@@ -32,11 +31,13 @@ import { IOAuthenticate } from "./ts/middleware";
   const IO = new socketIO.Server(HTTPServer, {
     cors: { credentials: true, origin: process.env.FRONTEND },
   });
-  IO.use(socketIOSession(session));
+  IO.use(socketIOSession(session) as any);
   IO.use(IOAuthenticate);
   IORouter(IO);
 
   HTTPServer.listen(5000, () => {
     Utils.log("Server running at http://localhost:5000", "INFO");
   });
-})();
+};
+
+main();

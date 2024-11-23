@@ -1,5 +1,5 @@
 import React from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useConvoContext, useGlobalContext } from "../context";
 import {
   forwardMessages,
@@ -28,7 +28,7 @@ export function useIOLnrs() {
     dispatch: convoDispatcher,
     state: { activeID },
   } = useConvoContext();
-  const history = useHistory();
+  const navigate = useNavigate();
   const activeIDRef = React.useRef<string | null>(activeID);
   const { dispatch: globalDispatcher } = useGlobalContext();
 
@@ -64,7 +64,7 @@ export function useIOLnrs() {
     });
     socket.on("conversation:create:success", (conversation: IConversation) => {
       globalDispatcher(setLoading(GLTypes.CONVERSATION_CREATION, false));
-      if (conversation.type === ConversationType.GROUP) history.push("/home");
+      if (conversation.type === ConversationType.GROUP) navigate("/home");
       convoDispatcher(setConversation(conversation));
       convoDispatcher(setAID(conversation.id));
       globalDispatcher(setScreen(ScreenType.MESSAGE));
@@ -78,7 +78,7 @@ export function useIOLnrs() {
     });
     socket.on("conversation:edit:success", (conversation: IConversation) => {
       globalDispatcher(setLoading(GLTypes.CONVERSATION_EDIT, false));
-      history.push("/home");
+      navigate("/home");
       convoDispatcher(setConversation(conversation));
     });
     socket.on("conversation:recieve", (conversation: IConversation) =>
@@ -93,5 +93,5 @@ export function useIOLnrs() {
         convoDispatcher(setUserAdmin(type, cid, uid));
       }
     );
-  }, [convoDispatcher, globalDispatcher, history]);
+  }, [convoDispatcher, globalDispatcher, navigate]);
 }

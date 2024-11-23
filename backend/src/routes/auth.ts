@@ -136,49 +136,46 @@ router.post(
 
 router.post(
   "/reset-password/:uid",
-  (req: Request, res: Response): Response | void => {
+  async (req: Request, res: Response): Promise<Response> => {
     const { uid } = req.params;
     const client = RedisAuthSession.client;
     if (!client) return res.json(Utils.getResponse(500));
 
-    client.get(
-      `${FORGOT_PASSWORD_PREFIX}${uid}`,
-      async (error, id): Promise<Response | undefined> => {
-        if (error || !id) return res.json(Utils.getResponse(401));
-        const { password } = req.body;
-        if (!password) return res.json(Utils.getResponse(400));
+    const id = await client.get(`${FORGOT_PASSWORD_PREFIX}${uid}`);
 
-        const user = await User.findOne({ where: { id: id } });
-        if (!user) return res.json(Utils.getResponse(404));
-        user.password = await bcrypt.hash(password, 12);
-        user.save();
+    if (!id) return res.json(Utils.getResponse(401));
 
-        client.del(`${FORGOT_PASSWORD_PREFIX}${uid}`);
-        return res.json(Utils.getResponse(200));
-      }
-    );
+    const { password } = req.body;
+    if (!password) return res.json(Utils.getResponse(400));
+
+    const user = await User.findOne({ where: { id: id } });
+    if (!user) return res.json(Utils.getResponse(404));
+    user.password = await bcrypt.hash(password, 12);
+    user.save();
+
+    client.del(`${FORGOT_PASSWORD_PREFIX}${uid}`);
+    return res.json(Utils.getResponse(200));
   }
 );
 
 router.post(
   "/activate/:uid",
-  (req: Request, res: Response): Response | void => {
+  async (req: Request, res: Response): Promise<Response> => {
     const { uid } = req.params;
     const client = RedisAuthSession.client;
     if (!client) return res.json(Utils.getResponse(500));
-    client.get(`${ACTIVATE_PASSWORD_PREFIX}${uid}`, async (error, id) => {
-      if (error) return res.json(Utils.getResponse(500));
-      if (!id) return res.json(Utils.getResponse(404));
+    const id = await client.get(`${ACTIVATE_PASSWORD_PREFIX}${uid}`);
 
-      const user = await User.findOne({ where: { id: id } });
-      if (!user) return res.json(Utils.getResponse(401));
-      if (user.activated)
-        return res.json(Utils.getResponse(200, "Account already activated!"));
-      user.activated = true;
-      await user.save();
+    if (!id) return res.json(Utils.getResponse(404));
 
-      return res.json(Utils.getResponse(200));
-    });
+    const user = await User.findOne({ where: { id: id } });
+    if (!user) return res.json(Utils.getResponse(401));
+    if (user.activated)
+      return res.json(Utils.getResponse(200, "Account already activated!"));
+    user.activated = true;
+    await user.save();
+
+    return res.json(Utils.getResponse(200));
   }
 );
 

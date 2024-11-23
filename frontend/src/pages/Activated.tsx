@@ -1,21 +1,21 @@
+import { AxiosResponse } from "axios";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Logo from "../components/Logo";
 import { axios } from "../ts/constants";
-import { RouteComponentProps } from "react-router-dom";
-import { AxiosResponse } from "axios";
 
-function Activated(props: RouteComponentProps) {
+function Activated() {
   const [stale, setStale] = React.useState(false);
 
+  const params = useParams();
+  const navigate = useNavigate();
+
   React.useEffect(() => {
-    const { uid } = props.match.params as { uid: string };
-    axios.post(`/auth/activate/${uid}`).then((res: AxiosResponse) => {
-      if (res.data.status === 404 || res.data.status === 500)
-        props.history.push("/");
+    axios.post(`/auth/activate/${params.uid}`).then((res: AxiosResponse) => {
+      if (res.data.status === 404 || res.data.status === 500) navigate("/");
       if (res.data.body) setStale(true);
     });
-  }, [setStale, props.match.params, props.history]);
+  }, [params.uid, navigate]);
 
   return (
     <div

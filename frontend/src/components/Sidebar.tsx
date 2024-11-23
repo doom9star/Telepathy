@@ -1,10 +1,10 @@
-import React from "react";
 import classNames from "classnames";
-import { ENames, theme } from "../ts/constants";
+import React from "react";
+import { Tooltip } from "react-tooltip";
 import { useConvoContext, useGlobalContext } from "../context";
 import { setETab } from "../context/actionCreators";
+import { ENames } from "../ts/constants";
 import { ConversationType } from "../ts/types";
-import ReactTooltip from "react-tooltip";
 
 export default function Sidebar() {
   const {
@@ -31,7 +31,7 @@ export default function Sidebar() {
       className="flex flex-col items-center justify-center bg-gray-100"
       style={{ minWidth: "4rem" }}
     >
-      <ReactTooltip place="right" backgroundColor={theme.main} effect="solid" />
+      <Tooltip place="right" />
       <div className="relative">
         {activeETab !== ENames.SOLO && solosUnread > 0 && (
           <div

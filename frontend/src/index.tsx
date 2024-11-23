@@ -1,18 +1,18 @@
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en.json";
-import React from "react";
-import ReactDOM from "react-dom";
+import ReactDOM from "react-dom/client";
 import Provider from "./context";
 import "./index.css";
-import Router from "./Router";
+import App from "./App";
 
 TimeAgo.addDefaultLocale(en);
 
-ReactDOM.render(
-  <React.StrictMode>
-    <Provider>
-      <Router />
-    </Provider>
-  </React.StrictMode>,
-  document.getElementById("root")
+const root = ReactDOM.createRoot(
+  document.getElementById("root") as HTMLElement
+);
+
+root.render(
+  <Provider>
+    <App />
+  </Provider>
 );

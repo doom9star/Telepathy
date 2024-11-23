@@ -127,9 +127,9 @@ export namespace DB {
         where: { id: creatorID },
         relations: ["avatar"],
       });
-      conversation.participants = (
-        await User.findByIds(participantIDS, { relations: ["avatar"] })
-      ).concat(conversation.creator);
+      conversation.participants = (await User.findByIds(participantIDS)).concat(
+        conversation.creator
+      );
       conversation.messages = messages ? messages : [];
       conversation.legit = !!isLegit;
       conversation.unread = conversation.messages.length;

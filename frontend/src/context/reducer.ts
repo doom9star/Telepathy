@@ -1,4 +1,4 @@
-import produce from "immer";
+import { produce } from "immer";
 import { ConvoState, GlobalState } from ".";
 import { GLTypes, IConversation, IMessage } from "../ts/types";
 import {

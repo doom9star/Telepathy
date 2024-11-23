@@ -7,7 +7,7 @@ export type RestSessionRequest = Request & {
 };
 
 export type IOSessionRequest = socketIO.Socket & {
-  handshake: socketIO.Handshake & {
+  request: socketIO.Socket["request"] & {
     session?: Session & { uid?: string };
   };
 };

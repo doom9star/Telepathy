@@ -1,9 +1,7 @@
-import React from "react";
 import { Link } from "react-router-dom";
-import ReactTooltip from "react-tooltip";
+import { Tooltip } from "react-tooltip";
 import { useConvoContext, useGlobalContext } from "../context";
 import { setAID, setScreen } from "../context/actionCreators";
-import { theme } from "../ts/constants";
 import { ConversationType, ScreenType } from "../ts/types";
 
 interface Props {
@@ -22,12 +20,7 @@ function ESoloAndEGroup({ title }: Props) {
   } = useGlobalContext();
   return (
     <div className="relative">
-      <ReactTooltip
-        id="top"
-        place="top"
-        backgroundColor={theme.main}
-        effect="solid"
-      />
+      <Tooltip id="top" place="top" />
       <div className="flex flex-col justify-center pt-5">
         <span className="text-2xl text-blue-500 pt-4 pb-10 self-center font-bold">
           <i

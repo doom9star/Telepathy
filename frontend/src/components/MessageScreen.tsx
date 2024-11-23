@@ -1,5 +1,5 @@
 import React from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useConvoContext, useGlobalContext } from "../context";
 import {
   paginateMessages,
@@ -8,12 +8,12 @@ import {
   setScreen,
 } from "../context/actionCreators";
 import { useActiveConvo } from "../hooks/useActiveConvo";
-import { GLTypes, IJsonResponse, IMessage, ScreenType } from "../ts/types";
-import { axios } from "../ts/constants";
-import Message from "./Message";
-import Loader from "./Loader";
-import Button from "./Button";
 import socket from "../socket";
+import { axios } from "../ts/constants";
+import { GLTypes, IJsonResponse, IMessage, ScreenType } from "../ts/types";
+import Button from "./Button";
+import Loader from "./Loader";
+import Message from "./Message";
 
 const MessageScreen: React.FC = () => {
   const {
@@ -26,7 +26,7 @@ const MessageScreen: React.FC = () => {
   } = useGlobalContext();
   const { name, date, isSolo, imageURL, isCreator, convoProps } =
     useActiveConvo();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [showToolBar, setShowToolBar] = React.useState(false);
   const [paginationLoading, setPaginationLoading] = React.useState(false);
@@ -159,7 +159,7 @@ const MessageScreen: React.FC = () => {
               <div
                 onClick={() => {
                   setShowToolBar(false);
-                  history.push("/home/edit-group");
+                  navigate("/home/edit-group");
                 }}
                 className="py-2 px-4 text-gray-500 cursor-pointer text-sm hover:bg-gray-100"
               >

@@ -1,15 +1,17 @@
 import React from "react";
-import { useHistory } from "react-router";
-import { axios } from "../ts/constants";
+import { useNavigate } from "react-router-dom";
 import { useConvoContext, useGlobalContext } from "../context";
-import { IJsonResponse } from "../ts/types";
 import { resetConvoState, resetGlobalState } from "../context/actionCreators";
+import { axios } from "../ts/constants";
+import { IJsonResponse } from "../ts/types";
 
 export function useLogout() {
+  const [loading, setLoading] = React.useState(false);
+
   const { dispatch: globalDispatcher } = useGlobalContext();
   const { dispatch: convoDispatcher } = useConvoContext();
-  const history = useHistory();
-  const [loading, setLoading] = React.useState(false);
+  const navigate = useNavigate();
+
   const handler = React.useCallback(async () => {
     setLoading(true);
     const { data } = await axios.delete<IJsonResponse>("/auth/logout");
@@ -17,8 +19,9 @@ export function useLogout() {
     if (data.status === 200) {
       globalDispatcher(resetGlobalState());
       convoDispatcher(resetConvoState());
-      history.push("/");
+      navigate("/");
     }
-  }, [globalDispatcher, convoDispatcher, history]);
+  }, [globalDispatcher, convoDispatcher, navigate]);
+
   return { loading, handler };
 }
