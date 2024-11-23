@@ -5,11 +5,8 @@ export const theme = {
 };
 
 export const axios = Axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: process.env.REACT_APP_SERVER_URL as string,
   withCredentials: true,
-  headers: {
-    "Content-Type": "application/json",
-  },
 });
 
 export enum ENames {

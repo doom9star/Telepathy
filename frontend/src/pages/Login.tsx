@@ -1,12 +1,11 @@
+import { Button, Form, Input } from "antd";
 import React from "react";
+import { FiLogIn } from "react-icons/fi";
 import { Link } from "react-router-dom";
-import validator from "validator";
-import Button from "../components/Button";
-import Input from "../components/Input";
-import Logo from "../components/Logo";
-import { axios } from "../ts/constants";
-import { setUser } from "../context/actionCreators";
+import Alert from "../components/Alert";
 import { useGlobalContext } from "../context";
+import { setUser } from "../context/actionCreators";
+import { axios } from "../ts/constants";
 
 interface LoginInfo {
   email: string;
@@ -15,99 +14,82 @@ interface LoginInfo {
 
 function Login() {
   const { dispatch } = useGlobalContext();
-
-  const [info, setInfo] = React.useState({
-    email: "",
-    password: "",
-  });
-  const [errors, setErrors] = React.useState({} as LoginInfo);
   const [loading, setLoading] = React.useState(false);
+  const [serverError, setServerError] = React.useState("");
 
-  const onChange = React.useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setInfo((state) => ({ ...state, [e.target.name]: e.target.value }));
-    },
-    [setInfo]
-  );
   const handleLogin = React.useCallback(
-    async (e: React.MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
-      e.preventDefault();
-      const { email, password } = info;
-      const errors = {} as LoginInfo;
-      if (!validator.isEmail(email)) errors.email = "Must be an actual email!";
-      if (validator.isEmpty(password)) errors.password = "Must not be empty!";
-
-      setErrors(errors);
-      if (JSON.stringify(errors) === "{}") {
-        setLoading(true);
-        const { data } = await axios.post("/auth/login", info);
-        setLoading(false);
-        if (data.status === 200) {
-          dispatch(setUser(data.body));
-        } else {
-          if (!data.body.general) setErrors({ ...data.body });
-        }
+    async (values: LoginInfo) => {
+      setLoading(true);
+      const { data } = await axios.post("/auth/login", values);
+      setLoading(false);
+      if (data.status === 200) {
+        dispatch(setUser(data.body));
+      } else {
+        setServerError(data.body.message);
       }
     },
-    [info, dispatch]
+    [dispatch]
   );
+
   return (
     <div
       className="max-w-md mx-auto flex items-center"
       style={{ height: "80vh" }}
     >
-      <div className="w-full flex flex-col p-10 border shadow-sm">
-        <Logo styles="self-center mb-4 text-blue-500" />
-        <Input
-          inputProps={{
-            required: true,
-            type: "email",
-            name: "email",
-            placeholder: "Email",
-            value: info.email,
-            onChange: onChange,
-            autoFocus: true,
-          }}
-          error={errors.email}
-        />
-        <Input
-          inputProps={{
-            required: true,
-            type: "password",
-            name: "password",
-            placeholder: "Password",
-            value: info.password,
-            onChange: onChange,
-          }}
-          error={errors.password}
-        />
-        <div className="flex justify-between">
-          <span className="text-sm text-gray-500 mt-2">
-            New here? &nbsp;
-            <Link
-              to="/register"
-              className="text-blue-500 font-semibold underline"
+      <div className="w-full flex flex-col">
+        {serverError && (
+          <Alert
+            message={serverError}
+            styles="text-red-800 bg-red-100 mb-4"
+            onClose={() => setServerError("")}
+          />
+        )}
+        <Link to={"/"} className="self-center">
+          <img src="/logo.jpeg" alt="logo" className="w-64 h-32 object-cover" />
+        </Link>
+        <Form labelCol={{ span: 8 }} labelAlign="left" onFinish={handleLogin}>
+          <Form.Item
+            label="Email"
+            name="email"
+            rules={[{ required: true, message: "Please input your email!" }]}
+          >
+            <Input inputMode="email" autoFocus />
+          </Form.Item>
+          <Form.Item
+            label="Password"
+            name="password"
+            rules={[{ required: true, message: "Please input your password!" }]}
+          >
+            <Input.Password />
+          </Form.Item>
+          <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center justify-center text-xs">
+              <span className="ml-2 text-gray-500">New here? &nbsp;</span>
+              <Link to="/register">
+                <span className="text-blue-500 underline">register</span>
+              </Link>
+            </div>
+            <div className="flex items-center justify-center text-xs">
+              <span className="ml-2 text-gray-500">
+                Forgot password? &nbsp;
+              </span>
+              <Link to="/reset-password">
+                <span className="text-blue-500 underline">reset</span>
+              </Link>
+            </div>
+          </div>
+          <Form.Item className="flex justify-center">
+            <Button
+              type="primary"
+              className="text-xs ml-4"
+              icon={<FiLogIn size={10} />}
+              htmlType="submit"
+              loading={loading}
             >
-              Register
-            </Link>
-          </span>
-          <span className="text-sm text-gray-500 mt-2">
-            Forgot Password? &nbsp;
-            <Link
-              to="/reset-password"
-              className="text-blue-500 font-semibold underline"
-            >
-              Reset
-            </Link>
-          </span>
-        </div>
-        <Button
-          label="Login"
-          onClick={handleLogin}
-          styles="bg-blue-500 text-white mt-10"
-          spinnerColor={"blue"}
-          isLoading={loading}
-        />
+              login
+            </Button>
+          </Form.Item>
+        </Form>
       </div>
     </div>
   );

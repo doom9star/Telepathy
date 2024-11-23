@@ -1,11 +1,8 @@
+import { Button, Form, Input } from "antd";
 import React from "react";
+import { FaUserPlus } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import validator from "validator";
-
 import { axios } from "../ts/constants";
-import Input from "../components/Input";
-import Logo from "../components/Logo";
-import Button from "../components/Button";
 
 interface RegisterInfo {
   username: string;
@@ -15,120 +12,105 @@ interface RegisterInfo {
 }
 
 function Register() {
-  const [user, setUser] = React.useState<RegisterInfo>({
-    username: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
-  const [errors, setErrors] = React.useState({} as RegisterInfo);
   const [loading, setLoading] = React.useState(false);
   const [created, setCreated] = React.useState(false);
 
-  const onChange = React.useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setUser((state) => ({ ...state, [e.target.name]: e.target.value }));
-    },
-    []
-  );
-  const handleRegister = React.useCallback(
-    async (e: React.MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
-      const { email, username, password, confirmPassword } = user;
-      const errors = {} as RegisterInfo;
-      if (validator.isEmpty(username)) errors.username = "Must not by empty!";
-      if (!validator.isEmail(email)) errors.email = "Must be an actual email!";
-      if (validator.isEmpty(password)) errors.password = "Must not be empty!";
-      else if (!validator.isLength(password, { min: 8 }))
-        errors.password = "Must have minimum 8 characters!";
-      else if (!validator.equals(password, confirmPassword))
-        errors.confirmPassword = "Passwords must match!";
-
-      if (JSON.stringify(errors) === "{}") {
-        setLoading(true);
-        const { data } = await axios.post("/auth/register", user);
-        setLoading(false);
-        if (!data.body) setCreated(true);
-      } else setErrors(errors);
-    },
-    [user]
-  );
+  const handleRegister = React.useCallback(async (values: RegisterInfo) => {
+    setLoading(true);
+    const { data } = await axios.post("/auth/register", values);
+    setLoading(false);
+    if (!data.body) setCreated(true);
+  }, []);
 
   return (
     <div
       className="max-w-md mx-auto flex items-center "
       style={{ height: "100vh" }}
     >
-      <div className="w-full flex flex-col p-10 border shadow-sm">
-        <Logo styles="self-center mb-4 text-blue-500" />
+      <div className="w-full flex flex-col">
+        <Link to={"/"} className="self-center">
+          <img src="/logo.jpeg" alt="logo" className="w-64 h-32 object-cover" />
+        </Link>
         {created ? (
-          <div className="flex flex-col items-center text-gray-500">
-            <i className="fas fa-check-circle text-2xl text-green-500 mr-2"></i>
-            <span>Account created successfully,</span>
-            <span>We have sent you an email for activation!</span>
+          <div className="flex flex-col items-center text-gray-500 border border-solid border-gray-100 py-8 px-4">
+            <i className="fas fa-check-circle text-2xl text-green-500"></i>
+            <span className="font-bold">Account created successfully.</span>
+            <span className="text-sm">
+              We have sent you an email for activation.
+            </span>
           </div>
         ) : (
-          <>
-            <Input
-              inputProps={{
-                required: true,
-                type: "text",
-                name: "username",
-                placeholder: "Username",
-                value: user.username,
-                onChange: onChange,
-                autoFocus: true,
-              }}
-              error={errors.username}
-            />
-            <Input
-              inputProps={{
-                required: true,
-                type: "email",
-                name: "email",
-                placeholder: "Email",
-                value: user.email,
-                onChange: onChange,
-              }}
-              error={errors.email}
-            />
-            <Input
-              inputProps={{
-                required: true,
-                type: "password",
-                name: "password",
-                placeholder: "Password",
-                value: user.password,
-                onChange: onChange,
-              }}
-              error={errors.password}
-            />
-            <Input
-              inputProps={{
-                required: true,
-                type: "password",
-                name: "confirmPassword",
-                placeholder: "Confirm Password",
-                value: user.confirmPassword,
-                onChange: onChange,
-              }}
-              error={errors.confirmPassword}
-            />
-            <span className="text-sm text-gray-500 mt-2">
-              Already Registered? &nbsp;
-              <Link
-                to="/login"
-                className="text-blue-500 underline font-semibold"
+          <Form
+            labelCol={{ span: 8 }}
+            labelAlign="left"
+            onFinish={handleRegister}
+          >
+            <Form.Item
+              label="Username"
+              name="username"
+              rules={[
+                { required: true, message: "Please input your username!" },
+              ]}
+            >
+              <Input autoFocus />
+            </Form.Item>
+            <Form.Item
+              label="Email"
+              name="email"
+              rules={[{ required: true, message: "Please input your email!" }]}
+            >
+              <Input inputMode="email" />
+            </Form.Item>
+            <Form.Item
+              label="Password"
+              name="password"
+              rules={[
+                { required: true, message: "Please input your password!" },
+              ]}
+            >
+              <Input.Password />
+            </Form.Item>
+            <Form.Item
+              label="Confirm Password"
+              name="confirmPassword"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your password again!",
+                },
+                ({ getFieldValue }) => ({
+                  validator: (_, value) => {
+                    if (!value || getFieldValue("password") === value)
+                      return Promise.resolve();
+                    return Promise.reject(new Error("Passwords must match!"));
+                  },
+                }),
+              ]}
+            >
+              <Input.Password />
+            </Form.Item>
+            <div className="flex items-center justify-end mb-5">
+              <div className="flex items-center justify-center text-xs">
+                <span className="ml-2 text-gray-500">
+                  Already registered? &nbsp;
+                </span>
+                <Link to="/login">
+                  <span className="text-blue-500 underline">login</span>
+                </Link>
+              </div>
+            </div>
+            <Form.Item className="flex justify-center">
+              <Button
+                type="primary"
+                className="text-xs ml-4"
+                icon={<FaUserPlus size={10} />}
+                htmlType="submit"
+                loading={loading}
               >
-                Login
-              </Link>
-            </span>
-            <Button
-              label="Register"
-              styles="bg-blue-500 text-gray-100 mt-10"
-              onClick={handleRegister}
-              isLoading={loading}
-            />
-          </>
+                register
+              </Button>
+            </Form.Item>
+          </Form>
         )}
       </div>
     </div>

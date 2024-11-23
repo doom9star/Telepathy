@@ -1,6 +1,7 @@
 import { Navigate } from "react-router-dom";
 import { useGlobalContext } from "../context";
-import socket from "../socket";
+import { socket } from "../socket";
+import Navbar from "./Navbar";
 
 type Props = {
   children: any;
@@ -15,7 +16,12 @@ export const PrivateRoute: React.FC<Props> = (props) => {
 
   if (!socket.connected) socket.connect();
 
-  return props.children;
+  return (
+    <>
+      <Navbar />
+      {props.children}
+    </>
+  );
 };
 
 export const PublicRoute: React.FC<Props> = (props) => {

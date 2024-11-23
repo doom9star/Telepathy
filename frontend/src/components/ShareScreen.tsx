@@ -3,7 +3,7 @@ import React from "react";
 import { useConvoContext, useGlobalContext } from "../context";
 import { setLoading, setScreen } from "../context/actionCreators";
 import { useUserSearch } from "../hooks/useUserSearch";
-import socket from "../socket";
+import { socket } from "../socket";
 import { ConversationType, GLTypes } from "../ts/types";
 import Button from "./Button";
 import Input from "./Input";

@@ -1,7 +1,6 @@
 import { Spin } from "antd";
 import React from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import Navbar from "./components/Navbar";
 import { PrivateRoute, PublicRoute } from "./components/Route";
 import { useGlobalContext } from "./context";
 import { setUser } from "./context/actionCreators";
@@ -30,14 +29,21 @@ function Router() {
     });
   }, [dispatch]);
 
-  if (!isDone) return <Spin />;
+  if (!isDone)
+    return (
+      <div
+        className="flex justify-center items-center"
+        style={{ width: "100vw", height: "100vh" }}
+      >
+        <Spin />
+      </div>
+    );
 
   return (
     <BrowserRouter>
-      <Navbar />
       <Routes>
         <Route path="/" element={<PublicRoute children={<Landing />} />} />
-        <Route path="/home" element={<PublicRoute children={<Home />} />} />
+        <Route path="/home" element={<PrivateRoute children={<Home />} />} />
         <Route
           path="/home/create-group"
           element={

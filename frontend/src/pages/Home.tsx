@@ -1,11 +1,11 @@
 import React from "react";
+import { Link } from "react-router-dom";
+import Explorer from "../components/Explorer";
 import InfoScreen from "../components/InfoScreen";
 import MessageScreen from "../components/MessageScreen";
 import ShareScreen from "../components/ShareScreen";
-import StarredScreen from "../components/StarredScreen";
-import Explorer from "../components/Explorer";
-import Logo from "../components/Logo";
 import Sidebar from "../components/Sidebar";
+import StarredScreen from "../components/StarredScreen";
 import { useConvoContext, useGlobalContext } from "../context";
 import { setConversations } from "../context/actionCreators";
 import { useIOLnrs } from "../hooks/useIOLnrs";
@@ -29,13 +29,13 @@ function Home() {
 
   return (
     <React.Fragment>
-      <div
-        className="w-full flex"
-        style={{ height: "92vh", transform: "translate(0, 8vh)" }}
-      >
+      <div className="w-full flex" style={{ height: "100vh" }}>
         <Sidebar />
         {activeETab && <Explorer />}
-        <div className="relative h-full w-full overflow-y-scroll bg-gray-100">
+        <div
+          className="relative w-full mt-20 overflow-y-scroll"
+          style={{ height: "90vh" }}
+        >
           {screen.current === ScreenType.MESSAGE ? (
             <MessageScreen />
           ) : screen.current === ScreenType.INFO ? (
@@ -45,9 +45,16 @@ function Home() {
           ) : screen.current === ScreenType.STARRED ? (
             <StarredScreen />
           ) : (
-            <div className="w-full h-full flex flex-col justify-center items-center">
-              <Logo styles="text-blue-500 text-9xl" />
-            </div>
+            <Link
+              to={"/"}
+              className="self-center flex items-center justify-center h-full"
+            >
+              <img
+                src="/logo.jpeg"
+                alt="logo"
+                className="w-96 h-96 object-cover"
+              />
+            </Link>
           )}
         </div>
       </div>

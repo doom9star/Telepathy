@@ -79,17 +79,17 @@ router.post(
     });
     if (!user)
       return res.json(
-        Utils.getResponse(404, { email: "Email doesn't exist!" })
+        Utils.getResponse(404, { message: "Email doesn't exist!" })
       );
 
     const valid: boolean = await bcrypt.compare(password, user.password);
     if (!valid)
-      return res.json(Utils.getResponse(401, { password: "Wrong Password!" }));
+      return res.json(Utils.getResponse(401, { message: "Wrong Password!" }));
 
     if (!user.activated)
       return res.json(
         Utils.getResponse(401, {
-          general: "Account must be activated before login!",
+          message: "Account must be activated before login!",
         })
       );
     req.session.uid = user.id;

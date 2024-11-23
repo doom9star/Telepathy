@@ -13,7 +13,7 @@ import {
   setUserActive,
   setUserAdmin,
 } from "../context/actionCreators";
-import socket from "../socket";
+import { socket } from "../socket";
 import { ENames } from "../ts/constants";
 import {
   ConversationType,

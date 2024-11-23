@@ -19,7 +19,7 @@ export const IOAuthenticate = (
   socket: IOSessionRequest,
   next: (err?: ExtendedError | undefined) => void
 ): IOSessionRequest | void => {
-  if (!socket.request.session || !socket.request.session.uid)
+  if (!socket.handshake.session || !socket.handshake.session.uid)
     return socket.disconnect(true);
   else next();
 };

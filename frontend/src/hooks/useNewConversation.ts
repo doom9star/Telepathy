@@ -5,7 +5,7 @@ import {
   setLoading,
   setScreen,
 } from "../context/actionCreators";
-import socket from "../socket";
+import { socket } from "../socket";
 import { ENames } from "../ts/constants";
 import { ConversationType, GLTypes, ScreenType } from "../ts/types";
 
@@ -28,6 +28,7 @@ export function useNewConversation() {
         return;
       }
     }
+    console.log(socket);
     globalDispatcher(setLoading(GLTypes.CONVERSATION_CREATION, true));
     socket.emit("conversation:create", ConversationType.SOLO, {
       participants: [uid],

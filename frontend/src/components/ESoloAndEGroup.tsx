@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { Tooltip } from "react-tooltip";
 import { useConvoContext, useGlobalContext } from "../context";
 import { setAID, setScreen } from "../context/actionCreators";
 import { ConversationType, ScreenType } from "../ts/types";
@@ -18,9 +17,9 @@ function ESoloAndEGroup({ title }: Props) {
     state: { user },
     dispatch: globalDispatcher,
   } = useGlobalContext();
+
   return (
     <div className="relative">
-      <Tooltip id="top" place="top" />
       <div className="flex flex-col justify-center pt-5">
         <span className="text-2xl text-blue-500 pt-4 pb-10 self-center font-bold">
           <i
@@ -49,8 +48,8 @@ function ESoloAndEGroup({ title }: Props) {
             return (
               <div
                 key={convo.id}
-                className={`flex items-center p-2 m-2 cursor-pointer hover:bg-gray-50 transition duration-700 ${
-                  activeID === convo.id && "opacity-50"
+                className={`flex items-center p-2 m-2 cursor-pointer hover:bg-gray-50 transition duration-700 rounded-lg ${
+                  activeID === convo.id && "opacity-70 bg-white"
                 }`}
                 onClick={() => {
                   convoDispatcher(setAID(convo.id));
@@ -63,7 +62,7 @@ function ESoloAndEGroup({ title }: Props) {
                   className="w-10 h-10 mr-4 rounded-full object-cover"
                 />
                 <div className="text-sm flex flex-col">
-                  <span className="font-bold text-gray-600">{name}</span>
+                  <span className="font-bold text-gray-600">@{name}</span>
                   {lastMessage && (
                     <span className="text-gray-400">
                       {lastMessage.sender.id === user?.id && (

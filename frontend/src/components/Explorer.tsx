@@ -13,7 +13,7 @@ function Explorer() {
   } = useGlobalContext();
 
   return (
-    <div className="w-1/3 relative" style={{ minWidth: "350px" }}>
+    <div className="w-1/3 relative bg-gray-50" style={{ minWidth: "350px" }}>
       {activeETab === ENames.SOLO ? (
         <ESoloAndEGroup title="Solo" />
       ) : activeETab === ENames.GROUP ? (

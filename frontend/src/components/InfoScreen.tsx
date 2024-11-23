@@ -3,7 +3,7 @@ import { useGlobalContext } from "../context";
 import { setScreen } from "../context/actionCreators";
 import { useActiveConvo } from "../hooks/useActiveConvo";
 import { useNewConversation } from "../hooks/useNewConversation";
-import socket from "../socket";
+import { socket } from "../socket";
 import { ScreenType } from "../ts/types";
 
 const InfoScreen: React.FC = () => {

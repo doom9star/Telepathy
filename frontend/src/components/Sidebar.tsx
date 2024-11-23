@@ -1,6 +1,6 @@
+import { Tooltip } from "antd";
 import classNames from "classnames";
 import React from "react";
-import { Tooltip } from "react-tooltip";
 import { useConvoContext, useGlobalContext } from "../context";
 import { setETab } from "../context/actionCreators";
 import { ENames } from "../ts/constants";
@@ -27,11 +27,7 @@ export default function Sidebar() {
   }, [convos]);
 
   return (
-    <div
-      className="flex flex-col items-center justify-center bg-gray-100"
-      style={{ minWidth: "4rem" }}
-    >
-      <Tooltip place="right" />
+    <div className="flex flex-col items-center justify-center bg-gray-50">
       <div className="relative">
         {activeETab !== ENames.SOLO && solosUnread > 0 && (
           <div
@@ -41,16 +37,18 @@ export default function Sidebar() {
             {solosUnread}
           </div>
         )}
-        <i
-          data-tip="Solo"
-          className={
-            "fas fa-user-friends p-6 home-icon" +
-            classNames({
-              " border-r-2 border-blue-400": activeETab === ENames.SOLO,
-            })
-          }
-          onClick={() => dispatch(setETab(ENames.SOLO))}
-        ></i>
+        <Tooltip title="Solo" placement="right">
+          <i
+            className={
+              "fas fa-user-friends p-6 home-icon" +
+              classNames({
+                " border-solid border-0 border-r-2 border-blue-400":
+                  activeETab === ENames.SOLO,
+              })
+            }
+            onClick={() => dispatch(setETab(ENames.SOLO))}
+          ></i>
+        </Tooltip>
       </div>
       <div className="relative">
         {activeETab !== ENames.GROUP && groupsUnread > 0 && (
@@ -61,57 +59,69 @@ export default function Sidebar() {
             {groupsUnread}
           </div>
         )}
+        <Tooltip title="Group" placement="right">
+          <i
+            className={
+              "fas fa-users p-6 home-icon" +
+              classNames({
+                " border-solid border-0 border-r-2 border-blue-400":
+                  activeETab === ENames.GROUP,
+              })
+            }
+            onClick={() => dispatch(setETab(ENames.GROUP))}
+          ></i>
+        </Tooltip>
+      </div>
+      <Tooltip title="Search" placement="right">
         <i
-          data-tip="Group"
+          data-tip="Search"
           className={
-            "fas fa-users p-6 home-icon" +
+            "fas fa-search p-6 home-icon" +
             classNames({
-              " border-r-2 border-blue-400": activeETab === ENames.GROUP,
+              " border-solid border-0 border-r-2 border-blue-400":
+                activeETab === ENames.SEARCH,
             })
           }
-          onClick={() => dispatch(setETab(ENames.GROUP))}
+          onClick={() => dispatch(setETab(ENames.SEARCH))}
         ></i>
-      </div>
-      <i
-        data-tip="Search"
-        className={
-          "fas fa-search p-6 home-icon" +
-          classNames({
-            " border-r-2 border-blue-400": activeETab === ENames.SEARCH,
-          })
-        }
-        onClick={() => dispatch(setETab(ENames.SEARCH))}
-      ></i>
-      <i
-        data-tip="World"
-        className={
-          "fas fa-globe-americas p-6 home-icon" +
-          classNames({
-            " border-r-2 border-blue-400": activeETab === ENames.WORLD,
-          })
-        }
-        onClick={() => dispatch(setETab(ENames.WORLD))}
-      ></i>
-      <i
-        data-tip="Profile"
-        className={
-          "fas fa-user p-6 home-icon" +
-          classNames({
-            " border-r-2 border-blue-400": activeETab === ENames.PROFILE,
-          })
-        }
-        onClick={() => dispatch(setETab(ENames.PROFILE))}
-      ></i>
-      <i
-        data-tip="Settings"
-        className={
-          "fas fa-cog p-6 home-icon" +
-          classNames({
-            " border-r-2 border-blue-400": activeETab === ENames.SETTINGS,
-          })
-        }
-        onClick={() => dispatch(setETab(ENames.SETTINGS))}
-      ></i>
+      </Tooltip>
+      <Tooltip title="World" placement="right">
+        <i
+          className={
+            "fas fa-globe-americas p-6 home-icon" +
+            classNames({
+              " border-solid border-0 border-r-2 border-blue-400":
+                activeETab === ENames.WORLD,
+            })
+          }
+          onClick={() => dispatch(setETab(ENames.WORLD))}
+        ></i>
+      </Tooltip>
+      <Tooltip title="Profile" placement="right">
+        <i
+          className={
+            "fas fa-user p-6 home-icon" +
+            classNames({
+              " border-solid border-0 border-r-2 border-blue-400":
+                activeETab === ENames.PROFILE,
+            })
+          }
+          onClick={() => dispatch(setETab(ENames.PROFILE))}
+        ></i>
+      </Tooltip>
+      <Tooltip title="Settings" placement="right">
+        <i
+          data-tip="Settings"
+          className={
+            "fas fa-cog p-6 home-icon" +
+            classNames({
+              " border-solid border-0 border-r-2 border-blue-400":
+                activeETab === ENames.SETTINGS,
+            })
+          }
+          onClick={() => dispatch(setETab(ENames.SETTINGS))}
+        ></i>
+      </Tooltip>
     </div>
   );
 }

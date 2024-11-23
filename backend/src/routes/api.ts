@@ -20,7 +20,7 @@ router.get(
     const query = req.params.query;
     let qb = User.createQueryBuilder("u")
       .leftJoinAndSelect("u.avatar", "a")
-      .where("u.restricted = 0")
+      .where("u.restricted = true")
       .andWhere("u.id <> :id", { id: req.session.uid });
 
     if (option == SearchOptions.ID)
@@ -56,7 +56,7 @@ router.get(
       .leftJoinAndSelect("c.creator", "cc")
       .leftJoinAndSelect("c.participants", "aps")
       .leftJoinAndSelect("aps.avatar", "a")
-      .where("c.legit = 1 AND ps.id = :id", { id: uid })
+      .where("c.legit = true AND ps.id = :id", { id: uid })
       .getMany();
 
     conversations = await Promise.all(

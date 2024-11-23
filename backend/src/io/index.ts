@@ -7,7 +7,7 @@ import userHlrs from "./userHlrs";
 
 const IORouter = (IO: socketIO.Server): void => {
   IO.on("connection", async (s: IOSessionRequest) => {
-    const uid = s.request.session!.uid!;
+    const uid = s.handshake.session!.uid!;
     sMGR.add(uid, s);
 
     userHlrs(s);

@@ -1,7 +1,8 @@
+import { Button } from "antd";
 import { AxiosResponse } from "axios";
 import React from "react";
+import { FiLogIn } from "react-icons/fi";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import Logo from "../components/Logo";
 import { axios } from "../ts/constants";
 
 function Activated() {
@@ -23,16 +24,23 @@ function Activated() {
       style={{ height: "80vh" }}
     >
       <div className="w-full flex flex-col p-10 border shadow-sm">
-        <Logo styles="self-center mb-4 text-blue-500" />
+        <Link to={"/"} className="self-center">
+          <img src="/logo.jpeg" alt="logo" className="w-64 h-32 object-cover" />
+        </Link>
         <div className="flex flex-col items-center text-gray-500">
-          <i className="fas fa-check-circle text-2xl text-green-500 mr-2"></i>
-          <span>Account has {stale && "already"} been activated!</span>
-          <Link
-            to="/login"
-            className="self-center mt-5 bg-blue-500 text-gray-100 rounded w-20 text-center text-sm p-2 font-bold"
+          <i className="fas fa-check-circle text-2xl text-green-500"></i>
+          <span className="font-bold mt-2">
+            Account has {stale && "already"} been activated.
+          </span>
+          <span>You can login now.</span>
+          <Button
+            type="primary"
+            className="text-xs mt-4"
+            icon={<FiLogIn size={10} />}
+            onClick={() => navigate("/login")}
           >
-            Login
-          </Link>
+            login
+          </Button>
         </div>
       </div>
     </div>

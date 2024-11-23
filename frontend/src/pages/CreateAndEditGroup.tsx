@@ -9,7 +9,7 @@ import { useGlobalContext } from "../context";
 import { setLoading } from "../context/actionCreators";
 import { useActiveConvo } from "../hooks/useActiveConvo";
 import { useUserSearch } from "../hooks/useUserSearch";
-import socket from "../socket";
+import { socket } from "../socket";
 import { ConversationType, GLTypes, ImageState, IUser } from "../ts/types";
 import { getFileURI } from "../ts/utils";
 

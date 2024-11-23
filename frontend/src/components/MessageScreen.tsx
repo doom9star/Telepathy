@@ -1,4 +1,8 @@
-import React from "react";
+import { Button, Dropdown, MenuProps, Spin } from "antd";
+import TextArea from "antd/es/input/TextArea";
+import React, { useMemo } from "react";
+import { FaCircle, FaPaperPlane } from "react-icons/fa";
+import { HiDotsVertical } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
 import { useConvoContext, useGlobalContext } from "../context";
 import {
@@ -8,11 +12,9 @@ import {
   setScreen,
 } from "../context/actionCreators";
 import { useActiveConvo } from "../hooks/useActiveConvo";
-import socket from "../socket";
+import { socket } from "../socket";
 import { axios } from "../ts/constants";
 import { GLTypes, IJsonResponse, IMessage, ScreenType } from "../ts/types";
-import Button from "./Button";
-import Loader from "./Loader";
 import Message from "./Message";
 
 const MessageScreen: React.FC = () => {
@@ -28,7 +30,6 @@ const MessageScreen: React.FC = () => {
     useActiveConvo();
   const navigate = useNavigate();
 
-  const [showToolBar, setShowToolBar] = React.useState(false);
   const [paginationLoading, setPaginationLoading] = React.useState(false);
   const [newMessageIndicatorLocation, setNewMessageIndicatorLocation] =
     React.useState<number>(0);
@@ -79,6 +80,63 @@ const MessageScreen: React.FC = () => {
     }
   };
 
+  const items: MenuProps["items"] = useMemo(() => {
+    const _ = [
+      {
+        key: "close",
+        label: "Close",
+        onClick: () => {
+          globalDispatcher(setScreen(null));
+          convoDispatcher(setAID(null));
+        },
+      },
+      {
+        key: "info",
+        label: "Info",
+        onClick: () => {
+          globalDispatcher(
+            setScreen(ScreenType.INFO, {
+              scrollY: messageContainerRef.current!.scrollTop,
+            })
+          );
+        },
+      },
+    ];
+
+    if (!isSolo && convoProps?.convo.creator.id === user?.id) {
+      _.push({
+        key: "edit",
+        label: "Edit",
+        onClick: () => {
+          navigate("/home/edit-group");
+        },
+      });
+      _.push({
+        key: "delete",
+        label: "Delete",
+        onClick: () => {},
+      });
+    }
+
+    if (!isSolo && !isCreator) {
+      _.push({
+        key: "exit",
+        label: "Exit",
+        onClick: () => {},
+      });
+    }
+
+    return _;
+  }, [
+    convoDispatcher,
+    convoProps?.convo.creator.id,
+    globalDispatcher,
+    isCreator,
+    isSolo,
+    navigate,
+    user?.id,
+  ]);
+
   React.useEffect(() => {
     if ((convoProps?.convo.unread || 0) > 0 && !lMgr[GLTypes.MESSAGE_READ]) {
       setNewMessageIndicatorLocation(convoProps?.convo.unread!);
@@ -128,69 +186,22 @@ const MessageScreen: React.FC = () => {
           <img
             src={imageURL}
             alt="noImg"
-            className="w-10 h-10 rounded-full object-cover border-2 border-white"
+            className="w-10 h-10 rounded-full object-cover"
           />
           <div className="flex flex-col ml-3">
-            <span className="text-blue-500">{name}</span>
+            <span className="font-bold text-gray-700">@{name}</span>
             {isSolo && convoProps?.active && (
-              <span className="text-xs text-gray-500 ">online</span>
+              <div className="text-xs flex items-center mt-1">
+                <FaCircle className="text-xs text-green-500 mr-1" /> online
+              </div>
             )}
           </div>
         </div>
-        <div
-          className="flex items-center"
-          onClick={() => setShowToolBar(!showToolBar)}
-        >
-          <i className="fas fa-ellipsis-v text-blue-500 cursor-pointer"></i>
+        <div className="flex items-center">
+          <Dropdown menu={{ items }}>
+            <Button icon={<HiDotsVertical />} />
+          </Dropdown>
         </div>
-        {showToolBar && (
-          <div className="absolute right-6 bg-gray-50 top-10 shadow-md">
-            <div
-              className="py-2 px-4 text-gray-500 cursor-pointer text-sm hover:bg-gray-100"
-              onClick={() => {
-                globalDispatcher(setScreen(null));
-                convoDispatcher(setAID(null));
-              }}
-            >
-              <i className="fas fa-comment-slash text-blue-500 w-8"></i>
-              Close
-            </div>
-            {!isSolo && convoProps?.convo.creator.id === user?.id && (
-              <div
-                onClick={() => {
-                  setShowToolBar(false);
-                  navigate("/home/edit-group");
-                }}
-                className="py-2 px-4 text-gray-500 cursor-pointer text-sm hover:bg-gray-100"
-              >
-                <i className="fas fa-pen text-yellow-500 w-8"></i>Edit
-              </div>
-            )}
-            {!isSolo && isCreator ? (
-              <div className="py-2 px-4 text-gray-500 cursor-pointer text-sm hover:bg-gray-100">
-                <i className="fas fa-sign-out-alt text-red-500 w-8"></i>Exit
-              </div>
-            ) : (
-              <div className="py-2 px-4 text-gray-500 cursor-pointer text-sm hover:bg-gray-100">
-                <i className="fas fa-trash text-red-500 w-8"></i>Delete
-              </div>
-            )}
-            <div
-              className="py-2 px-4 text-gray-500 cursor-pointer text-sm hover:bg-gray-100"
-              onClick={() => {
-                setShowToolBar(false);
-                globalDispatcher(
-                  setScreen(ScreenType.INFO, {
-                    scrollY: messageContainerRef.current!.scrollTop,
-                  })
-                );
-              }}
-            >
-              <i className="fas fa-info-circle text-green-500 w-8"></i>
-              Info
-            </div>
-          </div>
-        )}
       </div>
       <div className="h-3/4">
         <div
@@ -241,25 +252,22 @@ const MessageScreen: React.FC = () => {
                 : `'${convoProps?.convo.creator.username}' created this group on ${date}, Welcome!`}
             </span>
           )}
-          {paginationLoading && <Loader styles={{ top: "10%" }} />}
+          {paginationLoading && <Spin size="small" />}
         </div>
       </div>
       <div className="pt-10 mb-4 flex px-5 items-center h-auto">
-        <div
-          contentEditable
-          id="messageBox"
-          ref={messageBoxRef}
-          className="w-full bg-white focus:outline-none p-2 z-50 overflow-y-scroll border border-gray-300 mr-4"
-          style={{ fontSize: "80%" }}
-          data-placeholder="Write a message..."
-          onInput={(e) => setMessage(e.currentTarget.innerText)}
-        ></div>
+        <TextArea
+          rows={2}
+          placeholder="Write a message..."
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          className="mr-4"
+        />
         <Button
-          label="Send"
+          type="primary"
+          icon={<FaPaperPlane />}
           onClick={handleSend}
-          styles={`bg-blue-500 text-gray-100`}
-          icon="fas fa-paper-plane"
-          isLoading={lMgr[GLTypes.MESSAGE_CREATION]}
+          loading={lMgr[GLTypes.MESSAGE_CREATION]}
         />
       </div>
     </>
