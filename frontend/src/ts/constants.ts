@@ -13,7 +13,6 @@ export enum ENames {
   SOLO = 1,
   GROUP,
   SEARCH,
-  WORLD,
   PROFILE,
   SETTINGS,
 }

@@ -1,5 +1,8 @@
+import { Button } from "antd";
 import classNames from "classnames";
 import React from "react";
+import { FaStar } from "react-icons/fa";
+import { IoReturnUpForward } from "react-icons/io5";
 import ReactTimeAgo from "react-time-ago";
 import { useConvoContext, useGlobalContext } from "../context";
 import { useStarMessage } from "../hooks/useStarMessage";
@@ -37,14 +40,14 @@ function Message({ message, convoType, shareMessage }: Props) {
 
   return (
     <div
-      className={`bg-white p-6 mt-4 text-gray-500 ${
+      className={`bg-white border border-solid border-gray-100 p-6 mt-4 text-gray-500 ${
         user?.id === message.sender.id ? "self-end mr-2" : "ml-2"
       } break-words`}
-      style={{ maxWidth: "60%", minWidth: "60%", fontFamily: "cursive" }}
+      style={{ maxWidth: "60%", minWidth: "60%" }}
     >
       {message.forwarded && (
         <p className="text-xs mb-4 text-gray-400">
-          <i className="fas fa-share mr-1" /> Forwarded
+          <IoReturnUpForward className="mr-2" /> Forwarded
         </p>
       )}
       {convoType === ConversationType.GROUP && (
@@ -63,27 +66,30 @@ function Message({ message, convoType, shareMessage }: Props) {
       )}
       <div className="flex justify-between">
         <p
-          style={{ wordSpacing: "0.4em", fontFamily: "initial" }}
+          style={{ wordSpacing: "0.4em" }}
           className={`${
             convoType === ConversationType.GROUP && "pl-10 pt-2"
-          } whitespace-pre-wrap text-xs`}
+          } whitespace-pre-wrap text-xs font-bold`}
         >
           {message.body}
         </p>
         <div className="ml-2 text-sm text-gray-400">
-          <i
-            className={
-              "fas fa-star mr-2 hover:text-blue-500 cursor-pointer" +
-              classNames({
-                " text-blue-500": isStarred,
-              })
+          <Button
+            icon={
+              <FaStar
+                className={classNames({
+                  "text-gray-500": !isStarred,
+                  "text-blue-500": isStarred,
+                })}
+              />
             }
+            className="mr-2"
             onClick={() =>
               starMessage(activeID!, message.id, isStarred ? -1 : 1)
             }
           />
-          <i
-            className="fas fa-share hover:text-blue-500 cursor-pointer"
+          <Button
+            icon={<IoReturnUpForward />}
             onClick={() => shareMessage(message)}
           />
         </div>
@@ -100,7 +106,7 @@ function Message({ message, convoType, shareMessage }: Props) {
             } mt-4`}
           />
         )}
-        <span className="text-gray-400 mt-2 self-end">
+        <span className="text-gray-400 self-end">
           <ReactTimeAgo date={new Date(message.createdAt)} locale={"en-us"} />
         </span>
       </div>

@@ -35,10 +35,7 @@ function Navbar() {
             alt="noImg"
             className="w-7 h-7 mr-2 rounded-full object-cover"
           />
-          <span className="mr-8 text-gray-700">
-            <span className="text-gray-400">@</span>
-            {user?.username}
-          </span>
+          <span className="mr-8 text-gray-700">{user?.username}</span>
           <i
             className={`fas fa-chevron-${
               showMenu ? "up" : "down"

@@ -4,7 +4,6 @@ import { ENames } from "../ts/constants";
 import EProfile from "./EProfile";
 import Search from "./Search";
 import ESettings from "./ESettings";
-import EWorld from "./EWorld";
 import ESoloAndEGroup from "./ESoloAndEGroup";
 
 function Explorer() {
@@ -20,8 +19,6 @@ function Explorer() {
         <ESoloAndEGroup title="Group" />
       ) : activeETab === ENames.SEARCH ? (
         <Search />
-      ) : activeETab === ENames.WORLD ? (
-        <EWorld />
       ) : activeETab === ENames.SETTINGS ? (
         <ESettings />
       ) : activeETab === ENames.PROFILE ? (

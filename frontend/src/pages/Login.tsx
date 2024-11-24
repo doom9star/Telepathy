@@ -73,7 +73,7 @@ function Login() {
               <span className="ml-2 text-gray-500">
                 Forgot password? &nbsp;
               </span>
-              <Link to="/reset-password">
+              <Link to="/forgot-password">
                 <span className="text-blue-500 underline">reset</span>
               </Link>
             </div>

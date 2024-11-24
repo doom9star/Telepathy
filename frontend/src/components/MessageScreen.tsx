@@ -35,7 +35,6 @@ const MessageScreen: React.FC = () => {
     React.useState<number>(0);
   const [message, setMessage] = React.useState("");
 
-  const messageBoxRef = React.useRef<HTMLDivElement | null>(null);
   const userActiveCheckTimeoutRef = React.useRef<NodeJS.Timeout | undefined>();
   const messageContainerRef = React.useRef<HTMLDivElement | null>(null);
   const newMessageIndicatorRef = React.useRef<HTMLDivElement | null>(null);
@@ -76,7 +75,6 @@ const MessageScreen: React.FC = () => {
       globalDispatcher(setLoading(GLTypes.MESSAGE_CREATION, true));
       socket.emit("message:create", activeID, message);
       setMessage("");
-      messageBoxRef.current!.innerText = "";
     }
   };
 
@@ -189,7 +187,7 @@ const MessageScreen: React.FC = () => {
             className="w-10 h-10 rounded-full object-cover"
           />
           <div className="flex flex-col ml-3">
-            <span className="font-bold text-gray-700">@{name}</span>
+            <span className="font-bold text-gray-700">{name}</span>
             {isSolo && convoProps?.active && (
               <div className="text-xs flex items-center mt-1">
                 <FaCircle className="text-xs text-green-500 mr-1" /> online
@@ -236,7 +234,7 @@ const MessageScreen: React.FC = () => {
                   (convoProps.convo.unread! || newMessageIndicatorLocation) -
                     1 && (
                   <div
-                    className="flex justify-center items-center my-8 text-sm font-bold text-gray-600"
+                    className="flex justify-center items-center my-8 text-sm text-gray-600"
                     ref={newMessageIndicatorRef}
                   >
                     <i className="fas fa-arrow-down text-blue-600 mr-2" />
@@ -249,7 +247,7 @@ const MessageScreen: React.FC = () => {
             <span className="text-gray-500 font-bold text-sm text-center my-4">
               {isCreator
                 ? `You created this group - ${date}`
-                : `'${convoProps?.convo.creator.username}' created this group on ${date}, Welcome!`}
+                : `'${convoProps?.convo.creator.username}' created this group on ${date}`}
             </span>
           )}
           {paginationLoading && <Spin size="small" />}

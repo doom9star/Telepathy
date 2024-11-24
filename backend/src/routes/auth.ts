@@ -6,7 +6,6 @@ import User from "../entity/User";
 import {
   ACTIVATE_PASSWORD_PREFIX,
   FORGOT_PASSWORD_PREFIX,
-  _24HRS,
 } from "../ts/constants";
 import { RestAuthenticate } from "../ts/middleware";
 import { RedisAuthSession } from "../ts/redis";
@@ -23,7 +22,6 @@ router.get(
     const user = await User.findOne({
       where: { id: uid },
       relations: ["avatar"],
-      cache: { id: uid, milliseconds: _24HRS },
     });
     return res.json(Utils.getResponse(200, user));
   }
@@ -62,7 +60,7 @@ router.post(
       from: process.env.EMAIL!,
       to: email,
       subject: "Telepathy Account Activation",
-      html: `<h1 style="color:#1F51FF;">Warm welcome from Telepathy!</h1><br /><p>Your one step away from entering our chat world!</p><p>Visit this link to activate your account <a href="http://localhost:3000/activate/${uid}" style="color:#1F51FF">activate</a>.</p>`,
+      html: `<h1 style="color:#1F51FF;">Warm welcome from Telepathy!</h1><br /><p>Your one step away from entering our chat world!</p><p>Visit this link to activate your account <a href="${process.env.FRONTEND}/activate/${uid}" style="color:#1F51FF">activate</a>.</p>`,
     });
 
     return res.json(Utils.getResponse(201));
@@ -127,7 +125,7 @@ router.post(
       from: process.env.EMAIL!,
       to: email,
       subject: "Telepathy Reset Password",
-      html: `<h1 style="color:#1F51FF;">You have requested to reset your password!</h1><br /><p>Visit this link to reset your password <a href="http://localhost:3000/reset-password/${uid}" style="color:#1F51FF">activate</a>.</p>`,
+      html: `<h1 style="color:#1F51FF;">You have requested to reset your password!</h1><br /><p>Visit this link to reset your password <a href="${process.env.FRONTEND}/reset-password/${uid}" style="color:#1F51FF">reset</a>.</p>`,
     });
 
     return res.json(Utils.getResponse(200));

@@ -28,7 +28,6 @@ export function useNewConversation() {
         return;
       }
     }
-    console.log(socket);
     globalDispatcher(setLoading(GLTypes.CONVERSATION_CREATION, true));
     socket.emit("conversation:create", ConversationType.SOLO, {
       participants: [uid],

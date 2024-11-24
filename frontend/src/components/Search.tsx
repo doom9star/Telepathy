@@ -56,7 +56,7 @@ export default function Search() {
                 className="w-10 h-10 object-cover rounded-full mr-4"
               />
               <div className="flex flex-col">
-                <span className="font-bold text-gray-600">@{u.username}</span>
+                <span className="font-bold text-gray-600">{u.username}</span>
                 <span className="text-xs text-gray-500">{u.id}</span>
               </div>
               <i

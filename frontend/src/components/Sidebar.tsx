@@ -1,4 +1,4 @@
-import { Tooltip } from "antd";
+import { Badge, Tooltip } from "antd";
 import classNames from "classnames";
 import React from "react";
 import { useConvoContext, useGlobalContext } from "../context";
@@ -29,47 +29,43 @@ export default function Sidebar() {
   return (
     <div className="flex flex-col items-center justify-center bg-gray-50">
       <div className="relative">
-        {activeETab !== ENames.SOLO && solosUnread > 0 && (
-          <div
-            className="bg-red-500 absolute z-50 right-2 top-0 rounded-full px-2 py-1 text-white"
-            style={{ fontSize: "0.6em" }}
-          >
-            {solosUnread}
-          </div>
-        )}
         <Tooltip title="Solo" placement="right">
-          <i
-            className={
-              "fas fa-user-friends p-6 home-icon" +
-              classNames({
-                " border-solid border-0 border-r-2 border-blue-400":
-                  activeETab === ENames.SOLO,
-              })
-            }
-            onClick={() => dispatch(setETab(ENames.SOLO))}
-          ></i>
+          <Badge
+            count={activeETab !== ENames.SOLO ? solosUnread : ""}
+            offset={[-10, 8]}
+            hidden
+          >
+            <i
+              className={
+                "fas fa-user-friends p-6 home-icon" +
+                classNames({
+                  " border-solid border-0 border-r-2 border-blue-400":
+                    activeETab === ENames.SOLO,
+                })
+              }
+              onClick={() => dispatch(setETab(ENames.SOLO))}
+            ></i>
+          </Badge>
         </Tooltip>
       </div>
       <div className="relative">
-        {activeETab !== ENames.GROUP && groupsUnread > 0 && (
-          <div
-            className="bg-red-500 absolute z-50 right-2 top-0 rounded-full px-2 py-1 text-white"
-            style={{ fontSize: "0.6em" }}
-          >
-            {groupsUnread}
-          </div>
-        )}
         <Tooltip title="Group" placement="right">
-          <i
-            className={
-              "fas fa-users p-6 home-icon" +
-              classNames({
-                " border-solid border-0 border-r-2 border-blue-400":
-                  activeETab === ENames.GROUP,
-              })
-            }
-            onClick={() => dispatch(setETab(ENames.GROUP))}
-          ></i>
+          <Badge
+            count={activeETab !== ENames.GROUP ? groupsUnread : ""}
+            offset={[-10, 8]}
+            hidden
+          >
+            <i
+              className={
+                "fas fa-users p-6 home-icon" +
+                classNames({
+                  " border-solid border-0 border-r-2 border-blue-400":
+                    activeETab === ENames.GROUP,
+                })
+              }
+              onClick={() => dispatch(setETab(ENames.GROUP))}
+            ></i>
+          </Badge>
         </Tooltip>
       </div>
       <Tooltip title="Search" placement="right">
@@ -83,18 +79,6 @@ export default function Sidebar() {
             })
           }
           onClick={() => dispatch(setETab(ENames.SEARCH))}
-        ></i>
-      </Tooltip>
-      <Tooltip title="World" placement="right">
-        <i
-          className={
-            "fas fa-globe-americas p-6 home-icon" +
-            classNames({
-              " border-solid border-0 border-r-2 border-blue-400":
-                activeETab === ENames.WORLD,
-            })
-          }
-          onClick={() => dispatch(setETab(ENames.WORLD))}
         ></i>
       </Tooltip>
       <Tooltip title="Profile" placement="right">

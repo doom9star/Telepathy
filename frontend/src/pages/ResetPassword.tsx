@@ -1,11 +1,9 @@
 import React from "react";
-import validator from "validator";
 import { axios } from "../ts/constants";
 
+import { Button, Form, Input } from "antd";
+import { FiLogIn } from "react-icons/fi";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import Button from "../components/Button";
-import Input from "../components/Input";
-import Logo from "../components/Logo";
 
 interface ResetInfo {
   password: string;
@@ -13,11 +11,6 @@ interface ResetInfo {
 }
 
 function ResetPassword() {
-  const [info, setInfo] = React.useState({
-    password: "",
-    confirmPassword: "",
-  });
-  const [errors, setErrors] = React.useState({} as ResetInfo);
   const [loading, setLoading] = React.useState(false);
   const [complete, setComplete] = React.useState(false);
 
@@ -32,85 +25,82 @@ function ResetPassword() {
       });
   }, [params.uid, navigate]);
 
-  const onChange = React.useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setInfo((state) => ({ ...state, [e.target.name]: e.target.value }));
-    },
-    [setInfo]
-  );
-
-  const handleReset = React.useCallback(async () => {
-    const { confirmPassword, password } = info;
-    const errors = {} as ResetInfo;
-
-    if (validator.isEmpty(password)) errors.password = "Must not be empty!";
-    else if (!validator.isLength(password, { min: 8 }))
-      errors.password = "Must have minimum 8 characters!";
-    else if (!validator.equals(password, confirmPassword))
-      errors.confirmPassword = "Passwords must match!";
-
-    setErrors(errors);
-    if (JSON.stringify(errors) === "{}") {
+  const handleReset = React.useCallback(
+    async (values: ResetInfo) => {
       setLoading(true);
       const { data } = await axios.post(
         `/auth/reset-password/${params.uid}`,
-        info
+        values
       );
       setLoading(false);
       if (data.status === 200) setComplete(true);
-    }
-  }, [info, params.uid]);
+    },
+    [params.uid]
+  );
 
   return (
     <div
       className="max-w-md mx-auto flex items-center"
-      style={{ height: "100vh" }}
+      style={{ height: "80vh" }}
     >
-      <div className="w-full flex flex-col p-10 border shadow-sm">
-        <Logo styles="self-center mb-4 text-blue-500" />
+      <div className="w-full flex flex-col">
+        <Link to={"/"} className="self-center">
+          <img src="/logo.jpeg" alt="logo" className="w-64 h-32 object-cover" />
+        </Link>
         {!complete ? (
-          <>
-            <Input
-              inputProps={{
-                required: true,
-                type: "password",
-                name: "password",
-                placeholder: "Password",
-                value: info.password,
-                onChange: onChange,
-                autoFocus: true,
-              }}
-              error={errors.password}
-            />
-            <Input
-              inputProps={{
-                required: true,
-                type: "password",
-                name: "confirmPassword",
-                placeholder: "Confirm Password",
-                value: info.confirmPassword,
-                onChange: onChange,
-              }}
-              error={errors.confirmPassword}
-            />
-            <Button
-              label="Reset"
-              onClick={handleReset}
-              styles="bg-blue-500 text-white mt-10"
-              spinnerColor={"blue"}
-              isLoading={loading}
-            />
-          </>
+          <Form labelCol={{ span: 8 }} labelAlign="left" onFinish={handleReset}>
+            <Form.Item
+              label="Password"
+              name="password"
+              rules={[
+                { required: true, message: "Please input your password!" },
+              ]}
+            >
+              <Input.Password autoFocus />
+            </Form.Item>
+            <Form.Item
+              label="Confirm Password"
+              name="confirmPassword"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your password again!",
+                },
+                ({ getFieldValue }) => ({
+                  validator: (_, value) => {
+                    if (!value || getFieldValue("password") === value)
+                      return Promise.resolve();
+                    return Promise.reject(new Error("Passwords must match!"));
+                  },
+                }),
+              ]}
+            >
+              <Input.Password />
+            </Form.Item>
+            <Form.Item className="flex justify-center">
+              <Button
+                type="primary"
+                className="text-xs ml-4"
+                htmlType="submit"
+                loading={loading}
+              >
+                reset
+              </Button>
+            </Form.Item>
+          </Form>
         ) : (
           <div className="flex flex-col items-center text-gray-500">
             <i className="fas fa-check-circle text-2xl text-green-500 mr-2"></i>
-            <span>Password has been successfully updated</span>
-            <Link
-              to="/login"
-              className="self-center mt-5 bg-blue-500 text-gray-100 rounded w-20 text-center text-sm p-2 font-bold"
+            <span className="font-bold">Password reset successfully.</span>
+            <span className="text-sm">You can login now.</span>
+            <Button
+              type="primary"
+              className="text-xs mt-4"
+              icon={<FiLogIn size={10} />}
+              onClick={() => navigate("/login")}
             >
-              Login
-            </Link>
+              login
+            </Button>
           </div>
         )}
       </div>

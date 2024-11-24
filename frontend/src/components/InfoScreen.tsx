@@ -1,4 +1,7 @@
-import React from "react";
+import { Button, Dropdown } from "antd";
+import React, { useCallback } from "react";
+import { BiDotsVerticalRounded } from "react-icons/bi";
+import { FaArrowLeft } from "react-icons/fa";
 import { useGlobalContext } from "../context";
 import { setScreen } from "../context/actionCreators";
 import { useActiveConvo } from "../hooks/useActiveConvo";
@@ -17,10 +20,68 @@ const InfoScreen: React.FC = () => {
 
   const [currentMenu, setCurrentMenu] = React.useState<string | null>(null);
 
+  const getItems = useCallback(
+    (participant: string, isCreator: boolean, isParticipantAdmin: boolean) => {
+      const _ = [];
+
+      if (participant !== user?.id) {
+        _.push({
+          key: "message",
+          label: "Message",
+          onClick: () => {
+            newConversation(participant);
+            dispatch(setScreen(ScreenType.MESSAGE));
+          },
+        });
+      }
+
+      if (!isCreator && !isParticipantAdmin) {
+        _.push({
+          key: "promote",
+          label: "Promote",
+          onClick: () => {
+            socket.emit(
+              "user:admin",
+              "promote",
+              convoProps?.convo.id,
+              participant
+            );
+          },
+        });
+      }
+
+      if (!isCreator && isParticipantAdmin) {
+        _.push({
+          key: "demote",
+          label: "Demote",
+          onClick: () => {
+            socket.emit(
+              "user:admin",
+              "demote",
+              convoProps?.convo.id,
+              participant
+            );
+          },
+        });
+      }
+
+      if (!isCreator) {
+        _.push({
+          key: "remove",
+          label: "Remove",
+          onClick: () => {},
+        });
+      }
+
+      return _;
+    },
+    [user?.id, convoProps?.convo.id, dispatch, newConversation]
+  );
+
   return (
-    <div className="p-4">
-      <i
-        className="fas fa-chevron-left bg-blue-500 text-xs text-white py-1 px-2 rounded-full cursor-pointer hover:opacity-80"
+    <div className="p-4 flex flex-col">
+      <Button
+        icon={<FaArrowLeft />}
         onClick={() => dispatch(setScreen(screen.previous))}
       />
       {isSolo ? (
@@ -28,45 +89,38 @@ const InfoScreen: React.FC = () => {
           <img
             src={imageURL}
             alt="noImg"
-            className="w-60 rounded-full mx-auto h-60 my-4 object-cover border-2"
+            className="w-60 rounded-full mx-auto h-60 mt-4 object-cover"
           />
-          <p className="text-center font-bold text-gray-600 text-2xl">
-            @{name}
-          </p>
+          <p className="text-center font-bold text-gray-600 text-2xl">{name}</p>
         </>
       ) : (
         <>
           <img
             src={imageURL}
             alt="noImg"
-            className="w-full h-60 my-4 object-cover border-2"
+            className="w-60 h-60 my-4 object-cover border-2 mx-auto"
           />
-          <p
-            className="text-center mb-10 text-gray-500 font-bold text-xl"
-            style={{ fontFamily: "cursive" }}
-          >
-            <i className="fas fa-signature mr-2 text-blue-400" />
+          <p className="text-center mb-10 text-gray-500 font-bold text-xl">
             {name}
           </p>
-          <p
-            className="text-sm m-2 font-semibold text-gray-500"
-            style={{ wordSpacing: "0.3rem", fontFamily: "cursive" }}
-          >
-            <i className="fas fa-align-center mr-2 text-blue-400" />
-            {convoProps?.convo.description}
-          </p>
-          <div className="flex flex-col items-center mx-2 float-right">
-            <p className="text-sm font-bold text-gray-500">
+          <div className="flex flex-col items-end mx-2">
+            <p
+              className="text-sm my-2 font-semibold text-gray-500"
+              style={{ wordSpacing: "0.3rem" }}
+            >
+              {convoProps?.convo.description}
+            </p>
+            <p className="text-sm mb-0 text-gray-500">
               <i className="fas fa-user-tie mr-2 text-blue-400" />
               {convoProps?.convo.creator.username}
             </p>
-            <p className="text-sm font-semibold mt-2 text-gray-500">
+            <p className="text-sm text-gray-500 mt-1">
               <i className="fas fa-calendar-day mr-2 text-blue-400" />
               {date}
             </p>
           </div>
-          <div className="m-4 w-full md:w-1/2">
-            <p className="text-center mt-20 text-sm font-bold text-gray-600">
+          <div className="w-full md:w-1/2">
+            <p className="text-center mt-20 text-sm text-gray-600">
               <i className="fas fa-users mr-2 text-blue-400" />
               Participants
             </p>
@@ -80,7 +134,7 @@ const InfoScreen: React.FC = () => {
                   onClick={() => {
                     setCurrentMenu(currentMenu === p.id ? null : p.id);
                   }}
-                  className="relative flex"
+                  className="border border-solid border-gray-100 rounded-md mb-2 relative flex"
                 >
                   <div
                     key={p.id}
@@ -94,67 +148,34 @@ const InfoScreen: React.FC = () => {
                     <span className="font-bold text-gray-600">
                       {p.id === user?.id ? "You" : p.username}
                     </span>
-                    {isParticipantAdmin && (
-                      <span
-                        className={`text-lg ml-auto text-${
-                          p.id === convoProps.convo.creator.id
-                            ? "yellow"
-                            : "gray"
-                        }-600 rounded-full`}
-                      >
-                        <i className="fas fa-ribbon" />
-                      </span>
-                    )}
-                  </div>
-                  {isAdmin && p.id !== user?.id && currentMenu === p.id && (
-                    <div className="flex text-sm bg-white py-2 px-2 cursor-pointer absolute z-50 top-10 left-40 shadow-md">
-                      <i
-                        onClick={() => {
-                          if (p.id !== user?.id) {
-                            newConversation(p.id);
-                            dispatch(setScreen(ScreenType.MESSAGE));
-                          }
-                        }}
-                        className="fas fa-paper-plane px-3 py-2 text-blue-600 hover:bg-gray-100"
-                      />
-                      {!isCreator ? (
-                        !isParticipantAdmin ? (
-                          <i
-                            onClick={() =>
-                              socket.emit(
-                                "user:admin",
-                                "promote",
-                                convoProps.convo.id,
-                                p.id
-                              )
-                            }
-                            className="fas px-3 py-2 fa-arrow-up text-green-600 hover:bg-gray-100"
-                          />
-                        ) : (
-                          <i
-                            onClick={() =>
-                              socket.emit(
-                                "user:admin",
-                                "demote",
-                                convoProps.convo.id,
-                                p.id
-                              )
-                            }
-                            className="fas px-3 py-2 fa-arrow-down text-red-600 hover:bg-gray-100"
-                          />
-                        )
-                      ) : null}
-                      {!isCreator && (
-                        <i className="fas px-3 py-2 fa-trash-alt text-purple-600 hover:bg-gray-100" />
+                    <div className="ml-auto">
+                      {isParticipantAdmin && (
+                        <span
+                          className={`text-lg text-${
+                            p.id === convoProps.convo.creator.id
+                              ? "yellow"
+                              : "gray"
+                          }-600 rounded-full`}
+                        >
+                          <i className="fas fa-ribbon" />
+                        </span>
                       )}
-                      <i
-                        className="fas px-3 py-2 fa-times text-yellow-500 hover:bg-gray-100"
-                        onClick={() => {
-                          setCurrentMenu(null);
-                        }}
-                      />
+                      {isAdmin && p.id !== user?.id && (
+                        <Dropdown
+                          className="ml-4"
+                          menu={{
+                            items: getItems(
+                              p.id,
+                              isCreator,
+                              !!isParticipantAdmin
+                            ),
+                          }}
+                        >
+                          <Button icon={<BiDotsVerticalRounded />} />
+                        </Dropdown>
+                      )}
                     </div>
-                  )}
+                  </div>
                 </div>
               );
             })}

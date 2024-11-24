@@ -78,7 +78,6 @@ function EProfile() {
             </Dropdown>
           )}
           <span className="text-gray-600 mt-2 text-xl font-bold">
-            <span className="text-gray-400">@ </span>
             {user?.username}
           </span>
           {user?.bio && (
